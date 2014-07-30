@@ -141,7 +141,6 @@
   Volume                   = {82},
 
   Abstract                 = {The finite-difference method is used to propagate elastic waves through a 3-D model of the Santa Clara Valley, an alluvium-filled basin that underlies the city of San Jose, California. The model was based on depth to bedrock information from water wells in the area. The simulation corresponded to a region 30 (east-west) by 22 (north-south) by 6 (depth) km and contained about 4 million grid points. Synthetic seismograms from the simulation are accurate at frequencies up to 1 Hz. Motions from a magnitude 4.4 aftershock of the Loma Prieta earthquake were modeled. Snapshots of ground motion and synthetic seismograms from the simulation are presented. The simulation illustrates S-to-surface-wave conversion at the edges of the basin and the large amplitude and long duration of ground motion in the basin compared to the surrounding rock. Love waves produced at the edge of the basin are the largest arrivals in the transverse synthetics. Because of the slow group velocity of the Love waves, sites near the center of the basin have longer durations of significant motions than basin sites near the valley edges. Sites near the center of the basin also show larger peak amplitudes on the transverse component. Array analysis of the synthetic seismograms indicates that Love waves tend to propagate parallel to the eastern and western edges of the valley. Rayleigh waves are produced along the southern margin of the basin from incident S waves. Large radial motions occur where a Rayleigh wave impinges on the northeast margin of the valley. Some Rayleigh waves travel westward across the basin, after being scattered from the eastern edge of the valley. Synthetic seismograms from the simulation have similar peak amplitudes as seismograms recorded by the Sunnyvale dense array for this aftershock, although the duration of the tranverse component is not matched by the synthetic seismogram, using this basin model. The simulation indicates that the Love waves observed on the actual seismograms were produced by conversion of incident S waves at the southern margin of the Santa Clara Valley. 2-D simulations show how the S-to-Love-wave conversion is affected by the angle of incidence of the S wave and the sharpness of the velocity transition between the alluvium and bedrock. As more accurate basin models are developed, 3-D simulations should become valuable for predicting ground motions in sedimentary basins for future large earthquakes.},
-  File                     = {Frankel_1992_BSSA.pdf:C\:\\Documents and Settings\\root\\My Documents\\My eJournals\\Frankel_1992_BSSA.pdf:PDF},
   Owner                    = {rtaborda},
   Timestamp                = {2014.06.10},
   Url                      = {http://www.bssaonline.org/cgi/content/abstract/82/5/2045}
@@ -197,7 +196,6 @@
 
   Abstract                 = {The 2001 Big Bear Lake earthquake (Mw 4.63) was recorded by over 30 strong-motion instruments in the San Bernardino basin region of southern California. At periods longer than about 1 sec, the ground motions in the central portion of the basin have significantly larger amplitudes and extended durations of strong shaking relative to sites outside the basin. In many cases, the peak motions at the basin sites occur 10 or more seconds after the direct S-wave arrival, suggesting that these arrivals are controlled by basin-generated surface waves. To model these motions, I have performed finite-difference simulations using a 3D representation of the basin velocity structure. The basin structure has a minimum shear velocity of 250 m/sec, which coupled with the model grid spacing of 50 m yields a bandwidth resolution limit of T>1 sec for the numerical simulations. The simulations do quite well at reproducing the observed waveforms, amplitudes, and durations at periods of 3 sec and longer. At shorter periods (12 sec), the fit to the recorded motions is less well resolved, especially in matching the waveforms of the later-arriving phases. This suggests that in regions of complex geology, deterministic waveform modeling at periods approaching 1 sec involves more than simply reducing the minimum velocity threshold and, in particular, requires knowledge of the subsurface structure and distribution of seismic velocities at relatively short length scales (on the order of 50 m).},
   Doi                      = {10.1785/0120070013},
-  File                     = {Graves_2008_BSSA.pdf:C\:\\Documents and Settings\\root\\My Documents\\My eJournals\\Graves_2008_BSSA.pdf:PDF},
   Owner                    = {rtaborda},
   Timestamp                = {2014.06.09},
   Url                      = {http://www.bssaonline.org/cgi/content/abstract/98/1/241}
@@ -316,7 +314,6 @@
 
   Abstract                 = {We simulate ground motion in southern California from an ensemble of 7 spontaneous rupture models of large (Mw7.8) northwest-propagating earthquakes on the southern San Andreas fault (ShakeOut-D). Compared to long-period spectral accelerations from the Next Generation Attenuation (NGA) empirical relations, ShakeOut-D predicts similar average rock-site values (i.e., within roughly their epistemic uncertainty), but significantly larger values in Los Angeles and Ventura basins due to wave-guide focusing effects. The ShakeOut-D ground motion predictions differ from those of a kinematically parameterized, geometrically similar, scenario rupture: (1) the kinematic rock-site predictions depart significantly from the common distance-attenuation trend of the NGA and ShakeOut-D results and (2) ShakeOut-D predictions of long-period spectral acceleration within the basins of the greater Los Angeles area are lower by factors of 2√±3 than the corresponding kinematic predictions. We attribute these differences to a less coherent wavefield excited by the complex rupture paths of the ShakeOut-D sources.},
   Doi                      = {10.1029/2008GL036832},
-  File                     = {Olsen_2009_GRL.pdf:C\:\\Documents and Settings\\root\\My Documents\\My eJournals\\Olsen_2009_GRL.pdf:PDF},
   Owner                    = {rtaborda},
   Timestamp                = {2014.06.09}
 }
@@ -458,6 +455,53 @@
 
   Owner                    = {rtaborda},
   Timestamp                = {2014.06.09}
+}
+
+@TechReport{Tu_2003_Tech,
+  Title                    = {The Etree Library: {A} System for Manipulating Large Octrees on Disk},
+  Author                   = {Tu, Tiankai and L\'{o}pez, Julio and O'Hallaron, David},
+  Institution              = {School of Computer Science, Carnegie Mellon University},
+  Year                     = {2003},
+
+  Address                  = {Pittsburgh, Pennsylvania},
+  Month                    = {July},
+  Number                   = {CMU-CS-03-174},
+
+  Abstract                 = {This report describes a library, called the etree library, that allows C programmers to manipulate large octrees stored on disk. Octrees are stored as a sequence of fixed sized octant records sorted by a locational code order that is equivalent to a preorder traversal of the tree and a Z-order traversal through the domain. The sorted records are indexed by a conventional file-resident B-tree index and queried using fixed-length locational code keys. A schema can be defined to make an etree portable across different platforms. The etree library provides functions for creating, modifying, and searching octrees, including efficient mechanisms for appending octants and iterating over octants in Z-order. The library is the foundation for a larger research effort aimed at enabling scientists and engineers to solve large physical simulations on their desktop systems by recasting the simulation process to work directly on large etrees stored on disk.},
+  File                     = {etree-tr.pdf:http\://www.cs.cmu.edu/~euclid/etree-tr.pdf:PDF},
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.07.29},
+  Url                      = {http://www.cs.cmu.edu/~euclid/}
+}
+
+@Article{Wald_2007_BSSA,
+  Title                    = {Topographic Slope as a Proxy for Seismic Site Conditions and Amplification},
+  Author                   = {Wald, David J. and Allen, Trevor I.},
+  Journal                  = BSSA,
+  Year                     = {2007},
+  Number                   = {5},
+  Pages                    = {1379--1395},
+  Volume                   = {97},
+
+  Abstract                 = {We describe a technique to derive first-order site-condition maps directly from topographic data. For calibration, we use global 30 arc sec topographic data and VS30 measurements (here VS30 refers to the average shear-velocity down to 30 m) aggregated from several studies in the United States, as well as in Taiwan, Italy, and Australia. VS30 values are correlated against topographic slope to develop two sets of parameters for deriving VS30: one for active tectonic regions where topographic relief is high, and one for stable shields where topography is more subdued. By taking the gradient of the topography and choosing ranges of slope that maximize the correlation with shallow shear-velocity observations, we can recover, to first order, many of the spatially varying features of site-condition maps developed for California. Our site-condition map for the low-relief Mississippi Embayment also predicts the bulk of the VS30 observations in that region despite rather low slope ranges.We find that maps derived from the slope of the topography are often well correlated with other independently derived, regional-scale site-condition maps, but the latter maps vary in quality and continuity, and subsequently, also in their ability to match observed VS30 measurements contained therein. Alternatively, the slope-based method provides a simple approach to uniform site-condition mapping.After validating this approach in regions with numerous VS30 observations, we subsequently estimate and map site conditions for the entire continental United States using the respective slope correlations.},
+  Doi                      = {10.1785/0120060267},
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.07.30}
+}
+
+@Article{Wills_2006_BSSA,
+  Title                    = {Developing a Map of Geologically Defined Site-Condition Categories for {C}alifornia},
+  Author                   = {Wills, C. J. and Clahan, K. B.},
+  Journal                  = BSSA,
+  Year                     = {2006},
+  Number                   = {4{A}},
+  Pages                    = {1483--1501},
+  Volume                   = {96},
+
+  Abstract                 = {Consideration of site conditions is a vital step in analyzing and predicting earthquake ground motion. The importance of amplification by soil conditions has long been recognized, but though many seismic-instrument sites have been characterized by their geologic conditions, there has been no consistent, simple classification applied to all sites. As classification of sites by shear-wave velocity has become more common, the need to go back and provide a simple uniform classification for all stations has become apparent. Within the Pacific Earthquake Engineering Research Centerís Next Generation Attenuation equation project, developers of attenuation equations recognized the need to consider site conditions and asked that the California Geological Survey provide site conditions information for all stations that have recorded earthquake ground motion in California. To provide these estimates, we sorted the available shear-wave velocity data by geologic unit, generalized the geologic units, and prepared a map so that we could use the extent of the map units to transfer the velocity characteristics from the sites where they were measured to sites on the same or similar materials. This new map is different from the California Geological Survey ``preliminary site-conditions map of California'' in that 19 geologically defined categories are used, rather than National Earthquake Hazards Reduction Program categories. Although this map does not yet cover all of California, when completed it may provide a basis for more precise consideration of site conditions in ground-motion calculations.},
+  Doi                      = {10.1785/0120050179},
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.07.30}
 }
 
 @comment{jabref-meta: selector_review:}
