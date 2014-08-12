@@ -1,0 +1,63 @@
+
+\definecolor{mylistingbkgd}{RGB}{255,255,220}
+
+\begin{figure}[th]
+\begin{lstlisting}[frame=single,basewidth={0.5em,0.4em},backgroundcolor=\color{mylistingbkgd},basicstyle=\ttfamily\footnotesize,breaklines=true]
+> module swap PrgEnv-pgi PrgEnv-gnu
+> module load iobuf
+  [...]
+> UCVM_DIR=<user defined path>
+> UCVM_VERSION=14.3.0
+> ROOT_URL=http://hypocenter.usc.edu/research/ucvm
+> LIBS_URL=$ROOT_URL/$UCVM_VERSION/libraries
+> MODELS_URL=$ROOT_URL/$UCVM_VERSION/models
+  [...]
+> cd $UCVM_DIR
+> wget $LIBS_URL/proj-4.8.0.tar.gz
+> wget $LIBS_URL/euclid3-1.3.tar.gz
+> wget $MODELS_URL/cvms4.tar.gz
+  [...]
+> tar xzvf proj-4.8.0.tar.gz
+> cd proj-4.8.0
+> ./configure --prefix=$UCVM_DIR/lib/proj-4 --with-jni=no
+> make
+> make install
+  [...]
+> cd $UCVM_DIR
+> tar xvzf euclid3-1.3.tar.gz
+> cd euclid3-1.3
+> ./configure --prefix=$UCVM_DIR/lib/euclid3
+> make; make install
+  [...]
+> cd $UCVM_DIR
+> tar xzvf cvms4.tar.gz
+> cd CVM-S
+> ./configure --prefix=$UCVM_DIR/model/cvms4
+> make
+> make install
+  [...]
+> cd $UCVM_DIR
+> tar xzvf ucvm-14.3.0.tar.gz
+> cd UCVM
+> ./configure \
+  --prefix=$UCVM_DIR \
+  --enable-iobuf \
+  --enable-static \
+  --with-etree-include-path=$UCVM_DIR/lib/euclid3/include \
+  --with-etree-lib-path=$UCVM_DIR/lib/euclid3/lib \
+  --with-proj4-include-path=$UCVM_DIR/lib/proj4/include \
+  --with-proj4-lib-path=$UCVM_DIR/lib/proj4/lib \
+  --enable-model-cvms \
+  --with-cvms-lib-path=$UCVM_DIR/model/cvms4/lib \
+  --with-cvms-model-path=$UCVM_DIR/model/cvms4/src \
+  --with-cvms-include-path=$UCVM_DIR/model/cvms4/src
+> make
+> make install
+> make check
+  [...]
+\end{lstlisting}
+\caption{Advanced installation procedure showing the commands a user will follow when working on a Cray supercomputer system with default PGI compilers and Lustre filesystem. Note that UCVM requires GNU GCC compilers, version 4.3+. This particular set of instructions installs the model CVM-S (version 4) with the Proj and Etree libraries using static build and enabling IO-buffering. Shell commands are indicated by the symbol \textgreater. \textcolor{red}{This example needs to be checked.}}
+\label{fig:instadvanced}
+\end{figure}
+
+
