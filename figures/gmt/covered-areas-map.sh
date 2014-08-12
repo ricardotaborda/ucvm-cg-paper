@@ -41,7 +41,7 @@ gmt psxy -R -J -Ggreen@80 -Wthinnest -A -K -O >> ${PSOUTPUT} << END
 END
 
 gmt pstext -R -J -Dj0.1c -F+f+a+j -K -O >> ${PSOUTPUT} << END
--126.353173	39.680558 7p,Helvetica-Bold 38 TL CENCAL
+-126.353173	39.680558 7p,Helvetica-Bold 38 TL CenCal
 END
 
 # GTL Box

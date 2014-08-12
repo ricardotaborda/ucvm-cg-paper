@@ -1,29 +1,42 @@
 
-\begin{table*}
+\begin{table*}[t]
 \centering
 \small
 \caption{\textcolor{red}{Question marks indicate fields that need to be completed. This list needs to be checked carefully.} List of velocity models currently supported by the UCVM platform.}
 \begin{tabular}[]{lllllp{1.25in}}
-%\hline
 \\
 Model Name         & Region                & String Label & Installation & Coverage Coordinates & References \\
 \hline
-SCEC CVM-H         & Southern California   &   cvmh        &  Automated   & ?         & \citet{Plesch_2011_SCEC}     \newline
-                                                                                        \citet{CVM-H_Manual}         \newline
-                                                                                        ?                            \\
-SCEC CVM-S         & Southern California   &   cvms        &  Automated   & ?         & \citet{Magistrale_1996_BSSA} \newline
-                                                                                        \citet{Magistrale_2000_BSSA} \newline
-                                                                                        \citet{Kohler_2003_BSSA}     \\
-SCEC CVM-S4.26     & Southern California   &   ?           &  Automated   & ?         & ?                            \\
-Hadley-Kanamori 1D & ?                     &   1d          &  Automated   & ?         & ?                            \\
-Carl Tape SoCal    & Southern California   &   tape        &  Manual      & ?         & ?                            \\
-Broadband 1D       & Whittier Narrows      &   ?           &  Automated   & ?         & ?                            \\
-Graves             & Cape Mendocino        &   cmrg        &  Manual      & ?         & ?                            \\
-USGS CenCalVM      & Central California    &   cencal      &  Automated   & ?         & \citet{Brocher_2005_Tech}    \newline
-                                                                                        \citet{Brocher_2006_Proc}    \\
-SCEC CVM-NCI       & ?                     &   cvmnci      &  Manual      & ?         & ?                            \\
-Lin-Thurber        & California Statewide  &   lt          &  Manual      & ?         & ?                            \\
-USGS WFCVM         & Wasatch Front, Utah   &   wfcvm       &  Manual      & ?         & \citet{Magistrale_2006_Tech} \\
+SCEC CVM-H         & Southern California   & cvmh          &  Automated   & -120.8620, 30.9565 & \citet{Plesch_2011_SCEC}     \\
+                   &                       &               &              & -113.3329, 30.9565 & \citet{CVM-H_Manual}         \\
+                   &                       &               &              & -113.3329, 36.6129 & ?                            \\
+                   &                       &               &              & -120.8620, 36.6129 &                              \\ 
+SCEC CVM-S         & Southern California   & cvms          &  Automated   & ?                  & \citet{Magistrale_1996_BSSA} \\
+                   &                       &               &              &                    & \citet{Magistrale_2000_BSSA} \\
+                   &                       &               &              &                    & \citet{Kohler_2003_BSSA}     \\
+SCEC CVM-S4.26     & Southern California   & ?             &  Automated   & ?                  & ?                            \\
+SCEC CVM-S5        & Southern California   & ?             &  Automated   & ?                  & ?                            \\
+Hadley-Kanamori 1D & ?                     & 1d            &  Automated   & ?                  & ?                            \\
+Carl Tape SoCal    & Southern California   & tape          &  Manual      & ?                  & ?                            \\
+Broadband 1D       & Whittier Narrows      & ?             &  Automated   & ?                  & ?                            \\
+Graves             & Cape Mendocino        & cmrg          &  Manual      & ?                  & ?                            \\
+USGS CenCalVM      & Central California    & cencal        &  Automated   & -126.3532, 39.6806 & \citet{Brocher_2005_Tech}    \\
+                   &                       &               &              & -123.2732, 41.4849 & \citet{Brocher_2006_Proc}    \\
+                   &                       &               &              & -118.9445, 36.7022 &                              \\
+                   &                       &               &              & -121.9309, 35.0090 &                              \\
+SCEC CVM-NCI       & ?                     & cvmnci        &  Manual      & ?                  & ?                            \\
+Lin-Thurber        & California Statewide  & lt            &  Manual      & ?                  & ?                            \\
+USGS WFCVM         & Wasatch Front, Utah   & wfcvm         &  Manual      & ?                  & \citet{Magistrale_2006_Tech} \\
+\hline
+Ely GTL            & Southern California   & elygtl        &  Automated   & -122.5410, 30.7046 & \citet{Ely_2010_AGU}         \\
+                   &                       &               &              & -112.9958, 30.7046 &                              \\
+                   &                       &               &              & -112.9958, 38.5460 &                              \\
+                   &                       &               &              & -122.5410, 38.5460 &                              \\
+1D GTL             & Southern California   & 1dgtl         &  Automated   & ?                  & ?                            \\
+\hline
+\vsthirty{} Maps   & Southern California   & ucvm, yong    &              & ?                  & \citet{Wills_2006_BSSA}      \\
+                   &                       &               &              &                    & \citet{Wald_2007_BSSA}       \\
+                   &                       &               &              &                    & \citet{Yong_2012_BSSA}       \\
 \hline
 \end{tabular}
 \label{tab:cvms}
