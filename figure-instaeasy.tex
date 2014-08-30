@@ -1,8 +1,12 @@
 
-\definecolor{mylistingbkgd}{RGB}{255,255,220}
-
 \begin{figure}[th]
-\begin{lstlisting}[frame=single,basewidth={0.5em,0.4em},backgroundcolor=\color{mylistingbkgd},basicstyle=\ttfamily\footnotesize,breaklines=true]
+\begin{lstlisting}[
+	frame=single,
+	basewidth={0.45em,0.4em},
+	backgroundcolor=\color{mylistingbkgd},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
 > tar zxvf ucvm-14.3.0.tar.gz
 > cd ./UCVM
 > ./ucvm_setup.py

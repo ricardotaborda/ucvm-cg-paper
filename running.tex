@@ -1,0 +1,115 @@
+
+\section{Using UCVM}
+
+The UCVM platform offers a seriers of commands that can be used in sequence or in parallel. This section details the most relevant of these commands. The single-core commands can be run in any system where the platform has been successfully installed. The parallel commands, however, require a system where the standard Message Passing Interface (MPI) library and compilers are available. Single-core commands are useful to most users interested in exploring the properties of the regions covered by the models supported by the platform. On the other hand, advanced users needing to build large-scale (regional) materialized velocity models for earthquake modeling and simulation are the more likely to use the MPI commands. 
+
+In either case, before calling on UCVM commands, the user needs to make sure the main package configuration file is in place and has the desired setup. This file is used by UCVM to identify which components will be used when executing the commands. That is, is the file where the paths to all configured models and maps are specified, as well as any model flags are defined. The UCVM installer sets up this file automatically at \texttt{\$UCVM\_DIR/conf/ucvm.conf}. However, there are a number of situations where a user will want to modify this file (e.g., when adding a new model manually). Figure \ref{fig:ucvm-config} shows an example of a configuration file in which the models CVM-S and CVM-H are enabled, along with the 1D and GTL models used in the background of CVM-H. The following sections expand on how
+
+\input{figure-ucvm-config}
+
+\subsection{Single-Core Commands}
+
+We include here a short description of the single-core commands that are most used, or that we believe are most useful to the majority of users. A complete description of all the single-core commands available in UCVM can be found in the documentation links provided in Table \ref{tab:manuals}.
+
+\subsubsection{The \textup{\texttt{ucvm\_query}} command}
+
+This is the core tool of UCVM for querying the models supported by UCVM. Any set of crustal and GTL velocity models may be selected and queried in order of preference. Points may be queried by longitude, latitude and depth or longitude, latitude and elevation. These coordinate conversions for a particular model are handled transparently \textcolor{red}{(Not sure of what this means, we need to check the wording here to be as clear as possible.)}. Here is an example of how to run this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm_query -f $UCVM_DIR/conf/ucvm.conf -m cvms ????
+\end{lstlisting}
+
+Note that the location of the package configuration file needs to be passed to the command using the flag ``\texttt{-f}'' and that the model to be used is set with the ``\texttt{-m}'' flag. 
+
+\subsubsection{The \textup{\texttt{basin\_query}} command}
+
+The command \texttt{basin\_query} allows you to retrieve the depth at which a given \vs{}-threshold is first crossed. By default, the threshold value is set to be \vseq{1,000}, but that can easily be changed with the ``\texttt{-v}'' flag. Here is an example of this command for a \vs-threshold of 2,500~m/s. \textcolor{red}{we need to also put print the output of this query.}:
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./basin_query $UCVM_DIR/conf/ucvm.conf -m cvms -v 2500
+\end{lstlisting}
+
+\subsubsection{The \textup{\texttt{ucvm2mesh}} command}
+
+This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_SC}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2mesh -f ./ucvm2mesh_example.conf
+\end{lstlisting}
+
+\subsubsection{The \textup{\texttt{ucvm2etree}} command}
+
+The command \texttt{ucvm2etree} builds a materialized model in the form of an etree database, which uses an octree unstructured mesh-like format that adjust octant sizes to a specific resolution based on the material properties in the CVM being used at every point in a given volume. Resulting etrees built using this command are stand-alone discrete representations of a given velocity mode, and can be used as input models for other operations using UCVM. They can also be queried separately using APIs distributed with the etree library. In wave propagation problems, etrees are used by the code Hercules \citep{Tu_2006_SC, Taborda_2010_Tech} in earthquake ground motion simulations. As in the previous case, this command takes an argument input configuration file. The following example shows how to execute this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2etree -f ./ucvm2etree_example.conf
+\end{lstlisting}
+
+Note that \texttt{ucvm2etree} is the basic serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be of the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
+
+\subsubsection{Other mesh and etree tools}
+
+UCVM also provides other single-core serial commands to manipulate meshes and etrees. The additional mesh-related commands are: \texttt{mesh-check}, \texttt{mesh-op}, and \texttt{mesh-strip-ijk}. The command \texttt{mesh-check} does a basic quality assurance check of a mesh file. It checks that each record in the file is of the correct size makes sure that each value is not \texttt{NaN}, infinity, or negative. The command \texttt{mesh-op} subtracts a mesh from another mesh and outputs the difference. And the command \texttt{mesh-strip-ijk} converts an IJK-20 or IJK-32 mesh to an IJK-12 formatted mesh. Usage examples of each of these commands are shown next.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./mesh-check new_mesh.mesh IJK-12
+> ./mesh-op diff ./inmesh1 ./inmesh2 IJK-12 ./outmesh
+> ./mesh-strip-ijk ijk20_mesh IJK-20 output_mesh
+\end{lstlisting}
+
+Additional etree manipulation commands include: \texttt{ecoalesce}, \texttt{ecompact} and \texttt{grd2etree}. The command \texttt{ecoalesce} aggregates octants in homogeneous regions. It helps compact the physical representation of an etree by replacing eight adjacent octants of the same size and properties with a single octant twice that preserves the same material properties (i.e., it replaces eight identical leaf octants at level $n$ by their parent octant at level $N-1$). The command \texttt{ecompact}, on the other hand, helps compact an etree by removing empty unused space in the etree data structure on disk, effectively reducing the file's size. The \texttt{ecompact} is usually run following the \texttt{ecoalsce}. The command \texttt{grd2etree} extracts an etree map (a one octant-thick etree with mapping information) from a set of DEM and \vsthirty{} grid files in ArcGIS Gridfloat format. This command is accompanied by the command \texttt{grd\_query}, which can be used to query data from ArcGIS grid files in GridFloat format. The following are usage examples of these commands.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ecoalesce original.etree coalesced.etree
+> ./ecompact original.etree compacted.etree
+> ./grd2etree -f ./grd2float_sample.conf
+\end{lstlisting}
+
+\subsection{MPI Commands}
+
+%As mentioned before, UCVM also provides tools for accessing CVMs using parallel applications that can be run in high-performance computer systems. Next, we provide a short description of the 
+
+\subsubsection{The \textup{\texttt{basin\_query\_mpi}} command}
+
+
+%Notice: This command is intended to be run as a MPI job (e.g. mpirun ./basin_query_mpi). Please do not attempt to run it as a regular process.
+%This utility creates a binary float file listing the depths at which Vs crosses the user-defined threshold (these are typically referred to as "Z1.0" for 1000m/s and "Z2.5" for 2500m/s). It works by partitioning the points across the available processors, querying each point in parallel, and then amalgamating the results into one file.
+%For example, suppose we wanted the Z1.0 map from -118, 34 to -117, 35. We would likely run this as:
+%mpirun -np 4 ./basin_query_mpi -b out.file -f ../conf/ucvm.conf -m cvms -i 20 -v 1000 -l 34,-118 -s 0.01 -x 101 -y 101
+%This command outputs the data to "out.file" using the "cvms" model defined in "../conf/ucvm.conf". It queries each point at 20m increments on the Z-axis for when the Vs value is equal to or exceeds 1000m/s. It starts at 34, -118 and then goes by 0.01 in both the latitude and longitude directions for 101 points along the x and y axis, respectively.
+
+\subsection{Configuration Files}
+
+In the sections above we made mention two two types of configuration files used by UCVM. The first of these files is the UCVM configuration file, which is automatically built in the easy installation process or should be prepared by the user in the advanced installation mode. This file is used by UCVM at runtime to identify which models have been pre-compiled and are ready to be used. This configuration file is used explicitly and must be passed as an argument to the commands \texttt{ucvm\_query} and \texttt{basin\_query}. An example of the file's format and content is shown in Figure \ref{fig:ucvm-config}. The mesh and etreee commands, on the other hand, use the UCVM configuration file implicitly and, instead, require a different type of configuration file to be passed as an argument, as it was shown in the examples above. In particular, \texttt{ucvm2mesh}, \texttt{ucvm2etree}, \texttt{./grd2etree}, and their equivalent MPI commands require the composition of this additional file. An example of this second configuration file is shown in Figure \ref{fig:run-config}. Other examples are available at: \textcolor{red}{give a valid URL, maybe reference Table \ref{tab:manuals} again}.
+
+\input{figure-run-config}
