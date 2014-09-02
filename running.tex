@@ -41,7 +41,7 @@ The command \texttt{basin\_query} allows you to retrieve the depth at which a gi
 
 \subsubsection{The \textup{\texttt{ucvm2mesh}} command}
 
-This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_SC}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
 
 \begin{lstlisting}[
 	frame=none,
@@ -97,16 +97,56 @@ Additional etree manipulation commands include: \texttt{ecoalesce}, \texttt{ecom
 
 \subsection{MPI Commands}
 
-%As mentioned before, UCVM also provides tools for accessing CVMs using parallel applications that can be run in high-performance computer systems. Next, we provide a short description of the 
+As mentioned before, UCVM provides additional tools for accessing and manipulating CVMs using parallel applications that can be run in high-performance computer systems. These MPI commands provide the same basic operations of their equivalent single-core commands but provide the accelerated performance of parallelism. In general, these are all embarrassingly parallel processes and all the operations perform by each core are independent of each other. Interprocessor communications are limited to load distribution coordination at launch and collection of results at the end.
 
 \subsubsection{The \textup{\texttt{basin\_query\_mpi}} command}
 
+This command is the parallel version of \texttt{basin\_query}. It creates a binary float file listing the depths at which \vs{} crosses the user-defined threshold. The utility works by partitioning the points across the available processors, querying each point in parallel, and then amalgamating the results into one file. The command takes arguments preceded by flags for the output file, the UCVM configuration file, the velocity model to be used, the vertical step size (in meters), the threshold depth, the origin coordinates (in longitude and latitude), the horizontal gridding size (in degrees), and the number of grid points \textcolor{red}{to the east (x) and to the north (y)}. The following example outputs the data to \texttt{out.file} using the model \texttt{cvms} defined in the configuration file \texttt{ucvm.conf}. It queries each point at 20~m increments on the $z$-axis until reaching \vseq{1000} starting at longitude and latitude coordinates $-118\degree, 34\degree$, and then goes by 0.01\textdegree in both directions for 101 points to reach $-117\degree, 35\degree$.
 
-%Notice: This command is intended to be run as a MPI job (e.g. mpirun ./basin_query_mpi). Please do not attempt to run it as a regular process.
-%This utility creates a binary float file listing the depths at which Vs crosses the user-defined threshold (these are typically referred to as "Z1.0" for 1000m/s and "Z2.5" for 2500m/s). It works by partitioning the points across the available processors, querying each point in parallel, and then amalgamating the results into one file.
-%For example, suppose we wanted the Z1.0 map from -118, 34 to -117, 35. We would likely run this as:
-%mpirun -np 4 ./basin_query_mpi -b out.file -f ../conf/ucvm.conf -m cvms -i 20 -v 1000 -l 34,-118 -s 0.01 -x 101 -y 101
-%This command outputs the data to "out.file" using the "cvms" model defined in "../conf/ucvm.conf". It queries each point at 20m increments on the Z-axis for when the Vs value is equal to or exceeds 1000m/s. It starts at 34, -118 and then goes by 0.01 in both the latitude and longitude directions for 101 points along the x and y axis, respectively.
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> mpirun -np 4 ./basin_query_mpi -b out.file -f ucvm.conf \
+  -m cvms -i 20 -v 1000 -l 34,-118 -s 0.01 -x 101 -y 101
+\end{lstlisting}
+
+Note that in the example above, the call to \texttt{basin\_query\_mpi} is preceded by a call to \texttt{mpirun} and a request for 4 cores.
+
+\subsubsection{The \textup{\texttt{ucvm2mesh-mpi}} command}
+
+This tools is the parallel equivalent of \texttt{ucvm2mesh}, and can be used to generate meshes in either IJK-12, IJK-20, IJK-32, or SORD formats. In this case, unlike with \texttt{basin\_query\_mpi}, the arguments are passed on in the run configuration file.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> mpirun -np 768 ucvm2mesh-mpi -f ./ucvm2mesh_example.conf
+\end{lstlisting}
+
+\subsubsection{The etree MPI commands}
+
+The operations equivalent to the single-core command \texttt{ucvm2etree} are done by a set of three commands, \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI} and \texttt{ucvm2etree-merge-MPI}. All three take as input the same run configuration-file and are executed in this order as shown in the following example:
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> mpirun -np 1025 ucvm2etree-extract-MPI \
+  -f ./ucvm2etree_example.conf
+> mpirun -np 1024 ucvm2etree-sort-MPI    \
+  -f ./ucvm2etree_example.conf
+> mpirun -np 1024 ucvm2etree-merge-MPI   \
+  -f ./ucvm2etree_example.conf
+\end{lstlisting}
+
+Here, the first operation, \texttt{ucvm2etree-extract-MPI}, divides the etree region into a user-defined set of columns which are distributed to all processors. The rank-0 processor works as a dispatcher and farms out each column to all the other processors in a pool of $N$ cores. Each core queries the chosen CVM independently in an embarrassingly parallel process. Since the rank-0 processor does not participate of the extraction, \texttt{ucvm2etree-extract-MPI} requires $N+1$ processors. The output of this first step is a set of $N$ sub-etrees. Subsequently, \texttt{ucvm2etree-sort-MPI} sorts these sub-etrees so that each file is in local pre-order (following a $z$-order). Again, the is an embarrassingly parallel operation in which each rank reads in one of the sub-etrees produced by the previous operation and outputs its own sorted etree. Finally, \texttt{ucvm2etree-merge-MPI} merges $N$ locally sorted sub-etrees into a final, compacted etree.
 
 \subsection{Configuration Files}
 
