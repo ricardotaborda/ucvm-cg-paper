@@ -2,9 +2,27 @@
 \section{Additional Utilities and Tools}
 \label{sec:utilities}
 
+\subsection{Tiling}
+
+\textcolor{red}{Not being a command, I do not know how we want to describe this feature. I am including it here tentatively because Patrick has at some point suggested it should be included when describing the framework. We could show a schematic figure illustrating how it works and a result.}
+
 \subsection{Small-Scale Heterogeneities Tools}
 
-The last decade has seem a tremendous growth on high performance computing and applications dedicated to earthquake ground motion simulations which is leading the charge toward performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM implements an algorithm generates models that incorporate small-scale heterogeneities to any underlying velocity model. The command \texttt{ssh\_generate} generates a binary float file of heterogeneities on a regular grid space with a normalized amplitude. Then, the command \texttt{ssh\_merge} adds the heterogeneities multiplied by some scaling factor to the model. The introduction of the heterogeneities is actually done by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. The following example generates and merges a set of small scale heterogeneities to ... \textcolor{red}{describe example}.
+The last decade has seem a tremendous growth on high performance computing and applications dedicated to earthquake ground motion simulations which is leading the charge toward performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM implements an algorithm generates models that incorporate small-scale heterogeneities to any underlying velocity model. The command \texttt{ssh\_generate} generates a binary float file of heterogeneities on a regular grid space with a normalized amplitude. Then, the command \texttt{ssh\_merge} adds the heterogeneities multiplied by some scaling factor to the model. The introduction of the heterogeneities is actually done by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. The following example generates and merges a set of small scale heterogeneities to ... \textcolor{red}{describe example}. 
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ssh_generate --hurst 0.1 --d1 20 --l1 1000 --st23 5 --seed 3 \
+  --n1 1000--n2 2000 --n3 2000 -m ssh.out
+> ./ssh_merge --input ssh.out --output combined.mesh \
+  --mesh extracted.mesh --std 0.1 --x 2000 --y 2000 --z 1000
+\end{lstlisting}
+
+Section \ref{sec:ch-ssh} shows an example of a set of simulations done using models built with UCVM that integrate small-scale heterogeneities, and discusses briefly the effect that this modeling feature has on the ground motion results and their importance.
 
 \subsection{Plotting Utilities}
 
