@@ -13,6 +13,8 @@ Various recent studies done have carefully conducted validations of simulations 
 
 The latest of these studies \citep{Taborda_2014_BSSA}, in particular, focuses on the validation of simulations of the Chino Hills earthquake using different velocity models, namely CVM-S and CVM-H. This in turn have helped evaluate the differences between the models and their accuracy. The validation performed in this study is based on comparisons with recorded seismograms in over 300 stations scattered throughout the region. The simulation and the models used created with UCVM cover an area of \adomain{180}{135}{km} and go as deep as 62~km. Figure \ref{fig:ch.validation} shows comparisons between the crustal structures of the two models, results of the surface peak ground velocity obtained from the simulations and contour maps of the validation results. The models created for these simulations were built using the etree MPI utilities on NICS's Kraken and NCSA's Blue Waters supercomputer systems employing between XX and YY thousand cores for up to ZZ hours. The sizes of the output (etree) files range between XXX and XXX GB and they comprised between 5 billion and 15 billion octants. \textcolor{red}{(This paragraph needs to be improved.)}
 
+\textcolor{green}{Do the logfiles still exist? Can provide runtimes, resources used (core hours, wallclock), and where it was run.}
+
 \input{figure-ch-validation}
 
 \subsubsection{Effects of small-scale heterogeneities in simulation}
@@ -24,6 +26,8 @@ The latest of these studies \citep{Taborda_2014_BSSA}, in particular, focuses on
 
 \textcolor{red}{Desirable. I know there are results---preliminary, perhaps---if CyberShake using the different velocity models, and I presume the models used in the simulation where done using UCVM. Who would be the right person to help us prepare a text and a figure for this sub-section?}
 
+\textcolor{green}{Scott can describe exactly how UCVM is used in the Cybershake mesher. If he fills in this section, we need to add him as a co-author.}
+
 \subsection{Something involving inversion and CVM-S4.26?}
 
 \textcolor{red}{Tentative. I ignore the level of importance UCVM had on preparing the models for Po and En-Jui's inversions in preparation to obtain CVM-S4.26. I suppose that in any case, the fact that CVM-S-4.26 was produced and included in UCVM is something worth showcasing here. i will need, however, to think harder about how to put it in in a nice way.}
@@ -31,3 +35,5 @@ The latest of these studies \citep{Taborda_2014_BSSA}, in particular, focuses on
 \subsection{Something involving the BBP?}
 
 \textcolor{red}{Tentative. Is UCVM used at all in the BBP?}
+
+\textcolor{green}{At the time I developed UCVM, it wasn't used in BPP. Has that changed?}
