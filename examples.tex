@@ -1,4 +1,52 @@
 
 \section{Examples}
 
-\textcolor{green}{Describe four common use cases: querying a data point, extracting a mesh, extracting an etree, plotting a horizontal slice. Command-lines and example output/plots are OK.}
+TBD
+
+\subsubsection{The \textup{\texttt{ucvm\_query}} command}
+
+Here is an example of how to run this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm_query -f $UCVM_DIR/conf/ucvm.conf -m cvms
+\end{lstlisting}
+
+Note that the location of the package configuration file needs to be passed to the command using the flag ``\texttt{-f}'' and that the model to be used is set with the ``\texttt{-m}'' flag. 
+
+\subsubsection{The \textup{\texttt{ucvm2mesh}} command}
+
+This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2mesh -f ./ucvm2mesh_example.conf
+\end{lstlisting}
+
+\subsubsection{The \textup{\texttt{ucvm2etree}} command}
+
+The command \texttt{ucvm2etree} builds a materialized model in the form of an etree database, which uses an octree unstructured mesh-like format that adjust octant sizes to a specific resolution based on the material properties in the CVM being used at every point in a given volume. Resulting etrees built using this command are stand-alone discrete representations of a given velocity mode, and can be used as input models for other operations using UCVM. They can also be queried separately using APIs distributed with the etree library. In wave propagation problems, etrees are used by the code Hercules \citep{Tu_2006_SC, Taborda_2010_Tech} in earthquake ground motion simulations. As in the previous case, this command takes an argument input configuration file. The following example shows how to execute this command.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2etree -f ./ucvm2etree_example.conf
+\end{lstlisting}
+
+Note that \texttt{ucvm2etree} is the basic serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be of the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
+
+
+\subsubsection{The \textup{\texttt{horizontal\_slice.py}} command}
+
+TBD

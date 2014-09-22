@@ -1,175 +1,71 @@
+\section{Features}
 
-\section{Using UCVM}
+The UCVM platform offers an API and a set of programs, many of which can be used either in a single processor context or in parallel. This section details the most relevant of these programs, categorized by the broad feature they are intended to support. The discussion will focus largely on how the single processor programs operate. Those features that have additional support for parallel computing will be noted, and any operational differences between the single core and parallel implementations shall be described.
 
-\textcolor{green}{We should describe the API as well. In fact, all of these utilities were written in terms of the UCVM API. I'd actually say this is the preferred method for querying with UCVM as it allows the user to integrate UCVM directly in their application. For example, Scott is using the UCVM API directly in Cybershake (or was, as of a couple of years ago).}
+The single-core commands can be run in any system where the platform has been successfully installed. The parallel commands, however, require a system where the standard Message Passing Interface (MPI) library and compilers are available. Single-core commands are useful to most users interested in exploring the properties of the regions covered by the models supported by the platform. On the other hand, advanced users needing to build large-scale (regional) materialized velocity models for earthquake modeling and simulation are the more likely to use the MPI commands. 
 
-\textcolor{green}{Also, I would remove command-lines and input config files from the descriptions here and in the next section. We can place specific use cases in the Examples section I added later in the document.}
+%\textcolor{green}{For each utility, we should implicitly answer four questions as a narrative. 1) What problem is this utility trying to solve? 2) How does this utility solve the problem? 3) What information does the user need to provide? 4) What does the utility output? For the input description, rather than providing a configuration file, I would use a table with the relevant parameters to the problem and a description of each (ignoring simple things like output file paths, number of processors, etc).}
 
-\textcolor{green}{For each utility, we should implicitly answer four questions as a narrative. 1) What problem is this utility trying to solve? 2) How does this utility solve the problem? 3) What information does the user need to provide? 4) What does the utility output? For the input description, rather than providing a configuration file, I would use a table with the relevant parameters to the problem and a description of each (ignoring simple things like output file paths, number of processors, etc).}
+\input{figure-tiling}
 
-\textcolor{green}{Using ucvm2mesh as an example, here's how I would answer the four questions:}
+\subsection{Querying Material Properties}
 
-\textcolor{green}{1) Construction of a structured uniform mesh in a format consistent with the AWP-ODC and SORD simulation codes. }
+UCVM provides two methods for querying models. The first method is programmatically, directly through the provided C language API. The second is via the command-line program \texttt{ucvm\_query}. Both methods query the underying models in the same manner; the \texttt{ucvm\_query} program is merely a simplified front-end layered upon the API.
 
-\textcolor{green}{2) Given a user-provided 2D map projection (typically UTM-11), a lat/long geographic anchor point, desired mesh cell dimensions along x-y-z, step sizes, and rotation angle in the map projection, ucvm2mesh projects the geographic coordinates of the Earth's surface into the map projection, placing the origin of the mesh as the anchor point and discretizing the volume according to the provided dimensions and step size. For each point in the projected volume, ucvm2mesh determines the analous geographic point in terms of lat/long/depth and queries the underlying CVMs for the material properties. These material properties are then assigned to the mesh point. }
+The query process begins with the identification of one or more CVMs as the source of material properties. In this respect, the framework distinguishes between geo-technical layers and standard crustal models, allowing the user to make selections for both. As illustrated in Figure \ref{fig:tiling}, the set of standard crustal models is tiled in three dimensions to form a meta-model. The same operation is performed on the GTLs to define a meta-GTL. The interface between the meta-GTL and meta-model is then smoothed using an interpolation function (linear interpolation in the simplest case) along a user-defined interpolation zone parallel to the z-axis. Note that when two or more models overlap in three dimensional space, the model listed first within the tiling order will satisfy requests within that overlapping zone.
 
-\textcolor{green}{3) Lat/long origin point, rotation angle, number of cells x-y-z, dx, 2D map projection, list of models to query. }
+Once the models have been tiled in this manner, the API or program accepts one or more input query points from the user. For every point, the framework queries each component model of the two meta models, until either a valid set of velocities and density are returned, or all component models have been queried and the request was unsatisfied. Thus, for points that fall within the interpolation zone, two sets of material properties may be generated - one each for each meta model. These two sets of material properties are then combined using the interpolation function. As the native query interfaces of available CVMs accept query points in a wide array of formats (geographic coordinates versus UTM-11 map coordinates, or depth versus elevation for the vertical component, for example), UCVM may perform a coordinate transformation to convert its input format of decimal (latitude, longitude, depth/elevation) tuples to the local coordinate system of the component model being queried. This is accomplished transparently by utilizing the standard projection library Proj.4 (NOTE: cite Proj.4).
 
-\textcolor{green}{4) Four binary formats are supported (IJK-12, IJK-20, IJK-32, and SORD). For IJK-12 formatted meshes, the output is a binary file consisting of a list of nx*ny*nz tuples. Each tuple contains three single precision floating point values $(V_p. V_s, \rho)$, representing the material properties for a point in the mesh, with the mesh coordinates given implicitly by the position of the tuple in the list. The tuples are arranged in x-y-z order. Similarly, for IJK-20, ...}
+In the case of the API, the result of a successful query is a data-structure containing the velocities $V_{p}$ and $V{s}$, and the density $\rho$ at the point of interest, along with the elevation in meters and $V_{S30}$ of the corresponding point on the free-surface, and an indication of which velocity model within the meta-model ultimately satisfied the request. For those points which fall within the interpolation zone between the meta-GTL and meta-model, the framework additionally identifies the material properties reported by the meta-GTL and meta-model, as well as the component models from which they were extracted. For the \texttt{ucvm\_query} program, this same information is formulated in tabular format and printed to the screen.
 
-\textcolor{green}{Spinning the above answers into a narrative, we have enough formalism that we have fully specified the behavior of the utility while avoiding showing actual command-lines and output. The command lines may change in the future if the interface is refactored. But it's unlikely the underlying algorithm will change significantly.}
+This tiling mechanism can be a powerful feature for combining multiple regional velocity models, but a problem arises when velocity models overlap in three-dimensional space. Simply tiling two overlapping models will create a three-dimensional interface that may contain sharp contrasts in either velocities or density. This artifact is undesirable for earthquake simulation applications as it can cause reflections in wavefronts. There are two approaches to remedy this problem. The simplest approach is to define a UCVM patch model to trilinearly interpolate the material properties within arbitrary cuboid geographic region. This patch model may be tiled along with the overlapping traditional velocity models to produce a smoothed meta-model. However, this numerical smoothing approach does not reflect the physical structures of the Earth's surface. The second approach is to utilize UCVM to query all models within the overlap zone individually, and then manually combine the results with a user-defined interpolation function. 
 
-The UCVM platform offers a series of commands that can be used in sequence or in parallel. This section details the most relevant of these commands. The single-core commands can be run in any system where the platform has been successfully installed. The parallel commands, however, require a system where the standard Message Passing Interface (MPI) library and compilers are available. Single-core commands are useful to most users interested in exploring the properties of the regions covered by the models supported by the platform. On the other hand, advanced users needing to build large-scale (regional) materialized velocity models for earthquake modeling and simulation are the more likely to use the MPI commands. 
+\input{figure-meshing}
 
-In either case, before calling on UCVM commands, the user needs to make sure the main package configuration file is in place and has the desired setup. This file is used by UCVM to identify which components will be used when executing the commands. That is, is the file where the paths to all configured models and maps are specified, as well as any model flags are defined. The UCVM installer sets up this file automatically during installation at the path location \texttt{\$UCVM\_DIR/conf/ucvm.conf}. However, there are a limited number of situations where a user will want to modify this file (e.g., to change a specific model's configuration). Figure \ref{fig:ucvm-config} shows an example of a configuration file in which the models CVM-S and CVM-H are enabled, along with the 1D and GTL models used in the background of CVM-H. The following sections enumerate the command-line utilities and functionality provided by UCVM.
+\subsection{Creating Structured 3D Meshes}
 
-\input{figure-ucvm-config}
+The framework may be utilized to generate a structured uniform mesh in a format consistent with those used by the AWP-ODC and SORD (NOTE: need to confirm if SORD still uses this format) simulation codes with the program \texttt{ucvm2mesh}.
 
-\subsection{Single-Core Commands}
+Construction of mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($nx$, $ny$, $nz$) along the x,y and z axis (where x-y is in the plane of the projection and z is vertical), step size $dx$ in meters, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query, and these models are tiled in the same manner as was described in the previous section.
 
-We include here a short description of the single-core commands that are most used, or that we believe are most useful to the majority of users. A complete description of all the single-core commands available in UCVM can be found in the documentation links provided in Table \ref{tab:manuals}.
+The program \texttt{ucvm2mesh} projects the geographic coordinates of the Earth's surface into the map projection, placing the origin of the mesh as the anchor point and discretizing the volume according to the provided dimensions and step size. For each point in the projected volume, \texttt{ucvm2mesh} determines the analous geographic point in terms of (latitude, longitude, depth) and queries the underlying CVMs for material properties. These material properties are then assigned to the mesh point.
 
-\subsubsection{The \textup{\texttt{ucvm\_query}} command}
+Four binary mesh formats are supported: IJK-12, IJK-20, IJK-32, and SORD. The first three formats are mesh variants used by AWP-ODC (NOTE: cite) and the last format is used by SORD (NOTE: cite and check if still true). For IJK-12 formatted meshes, the output is a binary file consisting of a list of nx*ny*nz tuples. Each tuple contains three single precision floating point values $(V_p. V_s, \rho)$, representing the material properties for a point in the mesh, with the mesh coordinates given implicitly by the position of the tuple in the list. The tuples are arranged in x-y-z order. 
 
-This is the core tool of UCVM for querying the models supported by UCVM. Any set of crustal and GTL velocity models may be selected and queried in order of preference. Points may be queried by longitude, latitude and depth or longitude, latitude and elevation. These coordinate conversions for a particular model are handled transparently \textcolor{red}{(Not sure of what this means, we need to check the wording here to be as clear as possible.)}. Here is an example of how to run this command.
+Similarly, the IJK-20 format adds the seismological parameters $\mu$ and quality factor $Q$ so that each tuple contains $(V_p. V_s, \rho, mu, Q)$ (NOTE: confirm and explain mu and Q), while the IJK-32 format extends IJK-20 further by adding the three four-byte integers $(i,j,k)$ to each tuple, representing the index coordinate of the grid cell within the mesh. Thus, in this latter case, each tuple contains $(i, j, k, V_p. V_s, \rho, mu, Q)$.
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm_query -f $UCVM_DIR/conf/ucvm.conf -m cvms ????
-\end{lstlisting}
+(NOTE: Explain SORD format)
 
-Note that the location of the package configuration file needs to be passed to the command using the flag ``\texttt{-f}'' and that the model to be used is set with the ``\texttt{-m}'' flag. 
+(NOTE: Note ucvm2mesh-mpi exists, I don't think there are any operational differences)
 
-\subsubsection{The \textup{\texttt{basin\_query}} command}
+\input{figure-etrees}
 
-The command \texttt{basin\_query} allows you to retrieve the depth at which a given \vs{}-threshold is first crossed. By default, the threshold value is set to be \vseq{1,000}, but that can easily be changed with the ``\texttt{-v}'' flag. Here is an example of this command for a \vs-threshold of 2,500~m/s. \textcolor{red}{we need to also put print the output of this query.}:
+\subsection{Creating Etree Databases}
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./basin_query $UCVM_DIR/conf/ucvm.conf -m cvms -v 2500
-\end{lstlisting}
+TBD, reference Figure \ref{fig:etrees}
 
-\subsubsection{The \textup{\texttt{ucvm2mesh}} command}
+\subsection{Miscellaneous Features}
 
-This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+TBD
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm2mesh -f ./ucvm2mesh_example.conf
-\end{lstlisting}
+\subsubsection{Querying Iso-surfaces}
 
-\subsubsection{The \textup{\texttt{ucvm2etree}} command}
+TBD 
+%\texttt{basin\_query} and \texttt{basin\_query-mpi}
 
-The command \texttt{ucvm2etree} builds a materialized model in the form of an etree database, which uses an octree unstructured mesh-like format that adjust octant sizes to a specific resolution based on the material properties in the CVM being used at every point in a given volume. Resulting etrees built using this command are stand-alone discrete representations of a given velocity mode, and can be used as input models for other operations using UCVM. They can also be queried separately using APIs distributed with the etree library. In wave propagation problems, etrees are used by the code Hercules \citep{Tu_2006_SC, Taborda_2010_Tech} in earthquake ground motion simulations. As in the previous case, this command takes an argument input configuration file. The following example shows how to execute this command.
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm2etree -f ./ucvm2etree_example.conf
-\end{lstlisting}
+\subsubsection{Small-scale Heterogeneities}
 
-Note that \texttt{ucvm2etree} is the basic serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be of the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
+The last decade has seem a tremendous growth on high performance computing and applications dedicated to earthquake ground motion simulations which is leading the charge toward performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM implements an algorithm generates models that incorporate small-scale heterogeneities to any underlying velocity model. The command \texttt{ssh\_generate} generates a binary float file of heterogeneities on a regular grid space with a normalized amplitude. Then, the command \texttt{ssh\_merge} adds the heterogeneities multiplied by some scaling factor to the model. The introduction of the heterogeneities is actually done by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. The following example generates and merges a set of small scale heterogeneities to ... \textcolor{red}{describe example}.
 
-\subsubsection{Other mesh and etree tools}
+\subsubsection{Etree Optimization}
 
-UCVM also provides other single-core serial commands to manipulate meshes and etrees. The additional mesh-related commands are: \texttt{mesh-check}, \texttt{mesh-op}, and \texttt{mesh-strip-ijk}. The command \texttt{mesh-check} does a basic quality assurance check of a mesh file. It checks that each record in the file is of the correct size makes sure that each value is not \texttt{NaN}, infinity, or negative. The command \texttt{mesh-op} subtracts a mesh from another mesh and outputs the difference. And the command \texttt{mesh-strip-ijk} converts an IJK-20 or IJK-32 mesh to an IJK-12 formatted mesh. Usage examples of each of these commands are shown next.
+TBD \texttt{ecoalasce}, etc
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./mesh-check new_mesh.mesh IJK-12
-> ./mesh-op diff ./inmesh1 ./inmesh2 IJK-12 ./outmesh
-> ./mesh-strip-ijk ijk20_mesh IJK-20 output_mesh
-\end{lstlisting}
+\subsubsection{Visualization}
 
-Additional etree manipulation commands include: \texttt{ecoalesce}, \texttt{ecompact} and \texttt{grd2etree}. The command \texttt{ecoalesce} aggregates octants in homogeneous regions. It helps compact the physical representation of an etree by replacing eight adjacent octants of the same size and properties with a single octant twice that preserves the same material properties (i.e., it replaces eight identical leaf octants at level $n$ by their parent octant at level $N-1$). The command \texttt{ecompact}, on the other hand, helps compact an etree by removing empty unused space in the etree data structure on disk, effectively reducing the file's size. The \texttt{ecompact} is usually run following the \texttt{ecoalsce}. The command \texttt{grd2etree} extracts an etree map (a one octant-thick etree with mapping information) from a set of DEM and \vsthirty{} grid files in ArcGIS Gridfloat format. This command is accompanied by the command \texttt{grd\_query}, which can be used to query data from ArcGIS grid files in GridFloat format. The following are usage examples of these commands.
+%\textcolor{green}{I would collapse all of these subsections into one, basically stating that there is a limited plotting facility included with UCVM that supports cross-sections, horizontal slice, $V_{s30}$ maps, and iso-surfaces. And then a short description of each. I think the placeholder plots (Fig 6 marked as pending) are OK and we can show some/all of them. We can provide a detailed plotting use case in the Examples section. They are all fairly similar in that they are Python scripts that utilize the matplotlib Python module (I presume, if these scripts are based on others I developed in a separate code repository) for the actual plotting, while querying for material properties with either ucvm\_query or basin\_query.}
 
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ecoalesce original.etree coalesced.etree
-> ./ecompact original.etree compacted.etree
-> ./grd2etree -f ./grd2float_sample.conf
-\end{lstlisting}
+%\textcolor{green}{Also, with the inclusion of these scripts, does UCVM now depend on Python with matplotlib? If so, we should add that to the list of dependencies in the framework section as well as list it on the wiki. Or are these scripts optional?}
 
-\subsection{MPI Commands}
-
-As mentioned before, UCVM provides additional tools for accessing and manipulating CVMs using parallel applications that can be run in high-performance computer systems. These MPI commands provide the same basic operations of their equivalent single-core commands but provide the accelerated performance of parallelism. In general, these are all embarrassingly parallel processes and all the operations perform by each core are independent of each other. Interprocessor communications are limited to load distribution coordination at launch and collection of results at the end.
-
-\subsubsection{The \textup{\texttt{basin\_query\_mpi}} command}
-
-This command is the parallel version of \texttt{basin\_query}. It creates a binary float file listing the depths at which \vs{} crosses the user-defined threshold. The utility works by partitioning the points across the available processors, querying each point in parallel, and then amalgamating the results into one file. The command takes arguments preceded by flags for the output file, the UCVM configuration file, the velocity model to be used, the vertical step size (in meters), the threshold depth, the origin coordinates (in longitude and latitude), the horizontal gridding size (in degrees), and the number of grid points \textcolor{red}{to the east (x) and to the north (y)}. The following example outputs the data to \texttt{out.file} using the model \texttt{cvms} defined in the configuration file \texttt{ucvm.conf}. It queries each point at 20~m increments on the $z$-axis until reaching \vseq{1000} starting at longitude and latitude coordinates $-118\degree, 34\degree$, and then goes by 0.01\textdegree in both directions for 101 points to reach $-117\degree, 35\degree$.
-
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> mpirun -np 4 ./basin_query_mpi -b out.file -f ucvm.conf \
-  -m cvms -i 20 -v 1000 -l 34,-118 -s 0.01 -x 101 -y 101
-\end{lstlisting}
-
-Note that in the example above, the call to \texttt{basin\_query\_mpi} is preceded by a call to \texttt{mpirun} and a request for 4 cores.
-
-\subsubsection{The \textup{\texttt{ucvm2mesh-mpi}} command}
-
-This tools is the parallel equivalent of \texttt{ucvm2mesh}, and can be used to generate meshes in either IJK-12, IJK-20, IJK-32, or SORD formats. In this case, unlike with \texttt{basin\_query\_mpi}, the arguments are passed on in the run configuration file.
-
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> mpirun -np 768 ucvm2mesh-mpi -f ./ucvm2mesh_example.conf
-\end{lstlisting}
-
-\subsubsection{The etree MPI commands}
-
-The operations equivalent to the single-core command \texttt{ucvm2etree} are done by a set of three commands, \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI} and \texttt{ucvm2etree-merge-MPI}. All three take as input the same run configuration-file and are executed in this order as shown in the following example:
-
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> mpirun -np 1025 ucvm2etree-extract-MPI \
-  -f ./ucvm2etree_example.conf
-> mpirun -np 1024 ucvm2etree-sort-MPI    \
-  -f ./ucvm2etree_example.conf
-> mpirun -np 1024 ucvm2etree-merge-MPI   \
-  -f ./ucvm2etree_example.conf
-\end{lstlisting}
-
-Here, the first operation, \texttt{ucvm2etree-extract-MPI}, divides the etree region into a user-defined set of columns which are distributed to all processors. The rank-0 processor works as a dispatcher and farms out each column to all the other processors in a pool of $N$ cores. Each core queries the chosen CVM independently in an embarrassingly parallel process. Since the rank-0 processor does not participate of the extraction, \texttt{ucvm2etree-extract-MPI} requires $N+1$ processors. The output of this first step is a set of $N$ sub-etrees. Subsequently, \texttt{ucvm2etree-sort-MPI} sorts these sub-etrees so that each file is in local pre-order (following a $z$-order). Again, the is an embarrassingly parallel operation in which each rank reads in one of the sub-etrees produced by the previous operation and outputs its own sorted etree. Finally, \texttt{ucvm2etree-merge-MPI} merges $N$ locally sorted sub-etrees into a final, compacted etree.
-
-\subsection{Configuration Files}
-
-\textcolor{green}{I'd like to remove this subsection entirely as it is too detailed.}
-
-In the sections above we made mention two two types of configuration files used by UCVM. The first of these files is the UCVM configuration file, which is automatically built in the easy installation process or should be prepared by the user in the advanced installation mode. This file is used by UCVM at runtime to identify which models have been pre-compiled and are ready to be used. This configuration file is used explicitly and must be passed as an argument to the commands \texttt{ucvm\_query} and \texttt{basin\_query}. An example of the file's format and content is shown in Figure \ref{fig:ucvm-config}. The mesh and etreee commands, on the other hand, use the UCVM configuration file implicitly and, instead, require a different type of configuration file to be passed as an argument, as it was shown in the examples above. In particular, \texttt{ucvm2mesh}, \texttt{ucvm2etree}, \texttt{./grd2etree}, and their equivalent MPI commands require the composition of this additional file. An example of this second configuration file is shown in Figure \ref{fig:run-config}. Other examples are available at: \textcolor{red}{give a valid URL, maybe reference Table \ref{tab:manuals} again}.
-
-\input{figure-run-config}
+This section briefly describes a collection of utilities provided with the UCVM platform. These utilities are written in Python scripts that operate as wrappers around the basic single-core commands explained above, and work to produce specific output data commonly used for plotting. Because of brevity, we cannot fully describe here all the options and parameters that each of these commands can take as input and will only illustrate their operability. Additional details can be found at the UCVM User Guide (see Table \ref{tab:manuals}).
