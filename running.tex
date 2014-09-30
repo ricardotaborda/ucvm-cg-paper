@@ -26,17 +26,24 @@ This tiling mechanism can be a powerful feature for combining multiple regional 
 
 The framework may be utilized to generate a structured uniform mesh in a format consistent with those used by the AWP-ODC and SORD (NOTE: need to confirm if SORD still uses this format) simulation codes with the program \texttt{ucvm2mesh}.
 
-Construction of mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($nx$, $ny$, $nz$) along the x,y and z axis (where x-y is in the plane of the projection and z is vertical), step size $dx$ in meters, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query, and these models are tiled in the same manner as was described in the previous section.
+Construction of mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($n_x$, $n_y$, $n_z$) along the x,y and z axis (where x-y is in the plane of the projection and z is vertical), step size $dx$ in meters within the projected space, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query, and these models are tiled in the same manner as was described in the previous section.
 
-The program \texttt{ucvm2mesh} projects the geographic coordinates of the Earth's surface into the map projection, placing the origin of the mesh as the anchor point and discretizing the volume according to the provided dimensions and step size. For each point in the projected volume, \texttt{ucvm2mesh} determines the analous geographic point in terms of (latitude, longitude, depth) and queries the underlying CVMs for material properties. These material properties are then assigned to the mesh point.
+The program \texttt{ucvm2mesh} projects the geographic coordinates of the Earth's surface into the map projection, placing the origin of the mesh as the anchor point and discretizing the volume according to the provided dimensions and step size. For each point in the projected volume, \texttt{ucvm2mesh} determines the analous geographic point in terms of (latitude, longitude, depth) and queries the underlying CVMs for material properties. These material properties are then assigned to the mesh point. A minimum $V_s$ floor can be set to bound low velocities.
 
-Four binary mesh formats are supported: IJK-12, IJK-20, IJK-32, and SORD. The first three formats are mesh variants used by AWP-ODC (NOTE: cite) and the last format is used by SORD (NOTE: cite and check if still true). For IJK-12 formatted meshes, the output is a binary file consisting of a list of nx*ny*nz tuples. Each tuple contains three single precision floating point values $(V_p. V_s, \rho)$, representing the material properties for a point in the mesh, with the mesh coordinates given implicitly by the position of the tuple in the list. The tuples are arranged in x-y-z order. 
+Four binary mesh formats are supported: IJK-12, IJK-20, IJK-32, and SORD. The first three formats are mesh variants used by AWP-ODC (NOTE: cite) and the last format is used by SORD (NOTE: cite and check if still true). For IJK-12 formatted meshes, the output is a binary file consisting of a list of $n_xn_yn_z$ tuples. Each tuple contains three single precision floating point values $(V_p. V_s, \rho)$, representing the material properties for a point in the mesh, with the mesh coordinates given implicitly by the position of the tuple in the list. The tuples are arranged in x-y-z order, with units of meters per second. 
 
-Similarly, the IJK-20 format adds the seismological parameters $\mu$ and quality factor $Q$ so that each tuple contains $(V_p. V_s, \rho, mu, Q)$ (NOTE: confirm and explain mu and Q), while the IJK-32 format extends IJK-20 further by adding the three four-byte integers $(i,j,k)$ to each tuple, representing the index coordinate of the grid cell within the mesh. Thus, in this latter case, each tuple contains $(i, j, k, V_p. V_s, \rho, mu, Q)$.
+Similarly, the IJK-20 format adds two quality factors, $Q_p$ and $Q_s$, so that each tuple contains $(V_p. V_s, \rho, Q_p, Q_s)$. The quality factors are derived from the $V_s$ by the following equations (NOTE: cite where these came from - AWP?):
 
-(NOTE: Explain SORD format)
+\begin{equation}
+Q_s = \frac{50 V_s}{1000}, \qquad \qquad Q_p = 2 Q_s
+\end{equation}
 
-(NOTE: Note ucvm2mesh-mpi exists, I don't think there are any operational differences)
+The IJK-32 format extends IJK-20 further by adding the three four-byte integers $(i,j,k)$ to each tuple, explicitly representing the index coordinate of the grid cell within the mesh. In this latter case, each tuple contains $(i, j, k, V_p. V_s, \rho, Q_p, Q_s)$.
+
+The SORD format consists of three binary files, one each for $V_p$, $V_s$, and $\rho$. The values in each file are represented by single precision floating point values, sorted in x-y-z order. 
+
+To facilitate the construction of very large meshes, the framework offers a parallel version of the mesher named \emph{ucvm2mesh-mpi}. This MPI program operates analogously to that of the serial version. Spatial decomposition is performed by mapping subblocks of the meshing region to individual processors for extraction. The mapping is specified by providing a processor grid to the program at startup, which specifies the number of processors along each dimension. If the meshing region is sized $(n_x, n_y, n_z)$ grid points along each dimension, and the processor grid is specified as $(p_x, p_y, p_z)$, then each processor is assigned $(n_x/p_x, n_y/p_y, n_z/p_z)$ grid points. The only constraint in the mapping is that the processor count along a particular dimension must divide evenly into the number of grid points along that dimension. Once the region has been decomposed in this manner, extraction of material properties is an embarrassingly parallel operation.  
+
 
 \input{figure-etrees}
 
