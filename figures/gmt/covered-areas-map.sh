@@ -32,7 +32,7 @@ gmt psbasemap -JM4i -Rd-127/-111/30/43.5 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT
 # gmt psbasemap -JPoly/4i -Rd-127/-111/30/42 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT}
 # gmt psbasemap -JT-119/36/4i -Rd-127/-111/30/42 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT}
 
-gmt pscoast -R -J -Slightblue -G200 -Df -Wthinnest -Na/thinnest -B -V -P -K -O >> ${PSOUTPUT}
+gmt pscoast -R -J -Slightblue -G200 -Df -Wthinnest -Na/thinnest -A300/0/4 -B -V -P -K -O >> ${PSOUTPUT}
 
 # CenCalVM Box
 # ------------------------------------------------------------------------------
@@ -139,9 +139,9 @@ END
 # ------------------------------------------------------------------------------
 
 gmt ps2raster ${PSOUTPUT} -Tf -A20p
-mv ${PDFOUTPUT} ../raw-pdf/
+mv ${PDFOUTPUT} ../pdf/
 rm ${PSOUTPUT}
 rm gmt.conf gmt.history
 
-open -a Adobe\ Acrobat\ Pro.app ../raw-pdf/${PDFOUTPUT}
+open -a Adobe\ Acrobat\ Pro.app ../pdf/${PDFOUTPUT}
 
