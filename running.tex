@@ -24,9 +24,9 @@ This tiling mechanism can be a powerful feature for combining multiple regional 
 
 \subsection{Creating Structured 3D Meshes}
 
-The framework may be utilized to generate a structured uniform mesh in a format consistent with those used by the AWP-ODC and SORD (NOTE: need to confirm if SORD still uses this format) simulation codes with the program \texttt{ucvm2mesh}.
+The framework may be utilized to generate a structured uniform mesh in a format consistent with that used by the AWP-ODC simulation codes with the program \texttt{ucvm2mesh}.
 
-Construction of mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($n_x$, $n_y$, $n_z$) along the x,y and z axis (where x-y is in the plane of the projection and z is vertical), step size $dx$ in meters within the projected space, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query, and these models are tiled in the same manner as was described in the previous section.
+Construction of a mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($n_x$, $n_y$, $n_z$) along the x,y and z axis (where x-y is in the plane of the projection and z is vertical), step size $d_x$ in meters within the projected space, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query, and these models are tiled in the same manner as was described in the previous section.
 
 The program \texttt{ucvm2mesh} projects the geographic coordinates of the Earth's surface into the map projection, placing the origin of the mesh as the anchor point and discretizing the volume according to the provided dimensions and step size. For each point in the projected volume, \texttt{ucvm2mesh} determines the analous geographic point in terms of (latitude, longitude, depth) and queries the underlying CVMs for material properties. These material properties are then assigned to the mesh point. A minimum $V_s$ floor can be set to bound low velocities.
 
@@ -40,16 +40,35 @@ Q_s = \frac{50 V_s}{1000}, \qquad \qquad Q_p = 2 Q_s
 
 The IJK-32 format extends IJK-20 further by adding the three four-byte integers $(i,j,k)$ to each tuple, explicitly representing the index coordinate of the grid cell within the mesh. In this latter case, each tuple contains $(i, j, k, V_p. V_s, \rho, Q_p, Q_s)$.
 
-The SORD format consists of three binary files, one each for $V_p$, $V_s$, and $\rho$. The values in each file are represented by single precision floating point values, sorted in x-y-z order. 
-
 To facilitate the construction of very large meshes, the framework offers a parallel version of the mesher named \emph{ucvm2mesh-mpi}. This MPI program operates analogously to that of the serial version. Spatial decomposition is performed by mapping subblocks of the meshing region to individual processors for extraction. The mapping is specified by providing a processor grid to the program at startup, which specifies the number of processors along each dimension. If the meshing region is sized $(n_x, n_y, n_z)$ grid points along each dimension, and the processor grid is specified as $(p_x, p_y, p_z)$, then each processor is assigned $(n_x/p_x, n_y/p_y, n_z/p_z)$ grid points. The only constraint in the mapping is that the processor count along a particular dimension must divide evenly into the number of grid points along that dimension. Once the region has been decomposed in this manner, extraction of material properties is an embarrassingly parallel operation.  
-
 
 \input{figure-etrees}
 
 \subsection{Creating Etree Databases}
 
-TBD, reference Figure \ref{fig:etrees}
+The framework may also be utilized to generate a structured octree in the Etree database format (NOTE: cite Euclid Etree) using the command-line program \texttt{ucvm2etree}. Two Etree database formats are supported: the Hercules format, and the SCEC format. These two formats differ in the map projection used to discretize the domain. The Hercules format utilizes a projection that is a bilinear interpolation of a bounding box specified in geographical coordinates. The SCEC format supports any map projection available in the Proj.4 projection library.
+
+For the purposes of this discussion, we shall describe the generation of a Hercules format Etree database. Construction of such an Etree proceeds as shown in Figure \ref{fig:etrees}. The user specifies the extents of the Etree by describing the x-y-z dimensions of the domain in meters, as well as providing the geographical coordinates of a bounding box on the Earth's surface. This surface bounding box is mapped to the x-y plane of the domain using bilinear interpolation. The z dimension of the domain is interpreted as depth from the free surface. In this way, any $(x,y,z)$ coordinate in the domain may be transformed to a $(latitude, longitude, depth)$ coordinate relative to the Earth's surface. It is assumed that the user has pre-computed the domain dimensions such that they reflect the actual distances in the geographic bounding box (using any projection or spheroid model of their choosing). Note, however, that the octree format places restrictions on the possible valid domain sizes (NOTE: cite Euclid etree or other paper that describes this format in greater detail).
+
+This domain is then spatially decomposed at a course-grained level, dividing the volume into a two-dimensional logical grid of rectangular cuboids (columns) aligned with the x-y plane of the original domain, with each column having fixed size. This decomposition assists in parallelization since the material properties for a particular column can be extracted independently from the others. The number of columns in this logical grid is selectable by the user, subject to two constraints to preserve the octree format. First, the length and width of the columns must be equal. Second, the number of columns along the x and y axis must be a power of two.
+%column length, $l_c$, must satisfy the following relation with the domain length, $l_d$:
+%\begin{equation}
+%l_c = \frac{l_d}{2^i}
+%\end{equation}
+%Where $i$ is an arbitrary non-negative integer, $i \in \{0, 1, \dots, 31\}$. 
+
+With this coarse decomposition complete, each column of the original domain may then be processed in sequence by \emph{ucvm2etree}, or in parallel, as is the case with the MPI version of this utility. To extract the material properties for a column, the program further decomposes the column into a collection of octants, bilinearly interpolates the $(x,y,z)$ coordinate of each octant to geographic coordinates, and then queries the user-provided list of velocity models to determine the $(V_p, V_s, \rho)$ payload for each. The octants are processed in a top-down fashion, starting at the surface and ending at the maximum depth of the domain. Filled octants are inserted into the Etree database via the Etree API.
+
+This fine-grain decomposition into octants is an adaptive process that depends on the shear-wave velocities, $V_s$, encountered within that column as well as three parameters provided by the user: $V_{min}$, a floor $V_s$ for purposes of bounding octant sizes to a minimum size, $f_{max}$, the maximum simulation frequency to support, and $p$, the desired points per wavelength. At the column surface, the octants are initially assigned a size according to the following relation:
+\begin{equation}\label{eq:octant_size}
+s_{octant} = \frac{l_{d}}{ 2^{\left( \left\lceil \log_{2}(\frac{l_{d}}{s_{max}}) \right\rceil \right)} }
+\end{equation}
+The variable $l_{d}$ is the domain length (longest side). The variable $s_{max}$ is the maximum possible octant size that can support the desired shear velocity $V$, which is given by:
+\begin{equation}\label{eq:max_octant_size}
+s_{max} = \frac{V}{p f_{max}}
+\end{equation}
+At the surface, $V$ is initially set to $V_{min}$. The program then queries a two-dimensional slice of octants with this computed size at the column surface, and examines the actual $V_s$ values found within the slice. The minimum $V_s$ value is then inserted into equation (\ref{eq:max_octant_size}) by assigning $V = min(V_s)$, and the resulting $s_{max}$ is inserted into equation (\ref{eq:octant_size}) to yield a new octant size $s_{octant}$. If the newly calculated size is less than the pre-calculated value, the slice is requeried with the new octant size. This adaptive refinement continues as the program steps down through the column. Note that this refinement may also proceed in the other direction; high $V_s$ values in a slice may result in an increase of octant size. This will be often the case as $V_s$ values typically increase with depth. This refinement algorithm ensures that each column is extracted at a resolution which supports the maximum simulation frequency, while at the same time allowing for considerable space savings at depth.
+
 
 \subsection{Miscellaneous Features}
 
@@ -76,3 +95,7 @@ TBD \texttt{ecoalasce}, etc
 %\textcolor{green}{Also, with the inclusion of these scripts, does UCVM now depend on Python with matplotlib? If so, we should add that to the list of dependencies in the framework section as well as list it on the wiki. Or are these scripts optional?}
 
 This section briefly describes a collection of utilities provided with the UCVM platform. These utilities are written in Python scripts that operate as wrappers around the basic single-core commands explained above, and work to produce specific output data commonly used for plotting. Because of brevity, we cannot fully describe here all the options and parameters that each of these commands can take as input and will only illustrate their operability. Additional details can be found at the UCVM User Guide (see Table \ref{tab:manuals}).
+
+\subsubsection{Easy Install Utility}
+
+TBD
