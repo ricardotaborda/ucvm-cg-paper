@@ -50,7 +50,7 @@ The framework may also be utilized to generate a structured octree in the Etree 
 
 For the purposes of this discussion, we shall describe the generation of a Hercules format Etree database. Construction of such an Etree proceeds as shown in Figure \ref{fig:etrees}. The user specifies the extents of the Etree by describing the x-y-z dimensions of the domain in meters, as well as providing the geographical coordinates of a bounding box on the Earth's surface. This surface bounding box is mapped to the x-y plane of the domain using bilinear interpolation. The z dimension of the domain is interpreted as depth from the free surface. In this way, any $(x,y,z)$ coordinate in the domain may be transformed to a $(latitude, longitude, depth)$ coordinate relative to the Earth's surface. It is assumed that the user has pre-computed the domain dimensions such that they reflect the actual distances in the geographic bounding box (using any projection or spheroid model of their choosing). Note, however, that the octree format places restrictions on the possible valid domain sizes (NOTE: cite Euclid etree or other paper that describes this format in greater detail).
 
-This domain is then spatially decomposed at a course-grained level, dividing the volume into a two-dimensional logical grid of rectangular cuboids (columns) aligned with the x-y plane of the original domain, with each column having fixed size. This decomposition assists in parallelization since the material properties for a particular column can be extracted independently from the others. The number of columns in this logical grid is selectable by the user, subject to two constraints to preserve the octree format. First, the length and width of the columns must be equal. Second, the number of columns along the x and y axis must be a power of two.
+This domain is then spatially decomposed at a coarse-grained level, dividing the volume into a two-dimensional logical grid of rectangular cuboids (columns) aligned with the x-y plane of the original domain, with each column having fixed size. This decomposition assists in parallelization since the material properties for a particular column can be extracted independently from the others. The number of columns in this logical grid is selectable by the user, subject to two constraints to preserve the octree format. First, the length and width of the columns must be equal. Second, the number of columns along the x and y axis must be a power of two.
 %column length, $l_c$, must satisfy the following relation with the domain length, $l_d$:
 %\begin{equation}
 %l_c = \frac{l_d}{2^i}
@@ -59,16 +59,24 @@ This domain is then spatially decomposed at a course-grained level, dividing the
 
 With this coarse decomposition complete, each column of the original domain may then be processed in sequence by \emph{ucvm2etree}, or in parallel, as is the case with the MPI version of this utility. To extract the material properties for a column, the program further decomposes the column into a collection of octants, bilinearly interpolates the $(x,y,z)$ coordinate of each octant to geographic coordinates, and then queries the user-provided list of velocity models to determine the $(V_p, V_s, \rho)$ payload for each. The octants are processed in a top-down fashion, starting at the surface and ending at the maximum depth of the domain. Filled octants are inserted into the Etree database via the Etree API.
 
-This fine-grain decomposition into octants is an adaptive process that depends on the shear-wave velocities, $V_s$, encountered within that column as well as three parameters provided by the user: $V_{min}$, a floor $V_s$ for purposes of bounding octant sizes to a minimum size, $f_{max}$, the maximum simulation frequency to support, and $p$, the desired points per wavelength. At the column surface, the octants are initially assigned a size according to the following relation:
+This fine-grain decomposition into octants is an adaptive process that depends on the shear-wave velocities, $V_s$, encountered within that column as well as four parameters provided by the user: $V_{min}$, a floor $V_s$ for purposes of bounding octant sizes to a minimum size, $f_{max}$, the maximum simulation frequency to support, $p$, the desired points per wavelength, and $s_{max}$, the maximum octant size to allow. From these parameters, the program first determines the range of octant sizes to allow within the column. The upper bound is determined by the following relation:
+\begin{equation}\label{eq:octant_upper}
+s_{upper} = min(l_c, s_{max})
+\end{equation}
+Where $l_c$ is the column length. The lower bound is given by (NOTE: where did this come from?):
+\begin{equation}\label{eq:octant_lower}
+s_{lower} = \frac{V_{min}}{p f_{max}}
+\end{equation}
+As the octree format places constraints on valid octant sizes, these two bounds are then normalized with the relation:
 \begin{equation}\label{eq:octant_size}
-s_{octant} = \frac{l_{d}}{ 2^{\left( \left\lceil \log_{2}(\frac{l_{d}}{s_{max}}) \right\rceil \right)} }
+s_{octant} = \frac{l_{d}}{ 2^{\left( \left\lceil \log_{2}(\frac{l_{d}}{s}) \right\rceil \right)} }
 \end{equation}
-The variable $l_{d}$ is the domain length (longest side). The variable $s_{max}$ is the maximum possible octant size that can support the desired shear velocity $V$, which is given by:
-\begin{equation}\label{eq:max_octant_size}
-s_{max} = \frac{V}{p f_{max}}
-\end{equation}
-At the surface, $V$ is initially set to $V_{min}$. The program then queries a two-dimensional slice of octants with this computed size at the column surface, and examines the actual $V_s$ values found within the slice. The minimum $V_s$ value is then inserted into equation (\ref{eq:max_octant_size}) by assigning $V = min(V_s)$, and the resulting $s_{max}$ is inserted into equation (\ref{eq:octant_size}) to yield a new octant size $s_{octant}$. If the newly calculated size is less than the pre-calculated value, the slice is requeried with the new octant size. This adaptive refinement continues as the program steps down through the column. Note that this refinement may also proceed in the other direction; high $V_s$ values in a slice may result in an increase of octant size. This will be often the case as $V_s$ values typically increase with depth. This refinement algorithm ensures that each column is extracted at a resolution which supports the maximum simulation frequency, while at the same time allowing for considerable space savings at depth.
+The variable $l_{d}$ is the domain length (longest side). The variable $s$ is the size to normalize, either $s_{upper}$ or $s_{lower}$, corresponding to the upper and lower bounds, respectively.
 
+With these bounds established, the program successively queries two-dimensional slices of octants, starting at the column surface and stepping downward to greater depths. Inititially, the octants are of size $s_{lower}$ (maximum resolution), however, the octants may be resized based on the actual $V_s$ values encountered within a slice. After each slice is queried, the minimum $V_s$ found within is inserted into equation (\ref{eq:octant_lower}) and then normalized with (\ref{eq:octant_size}) to yield an updated octant size. If this new size differs from the current size, yet falls within the $s_{lower}$ and $s_{upper}$ bounds, and this size fits in the remaining vacant space of the octree, the slice is re-queried at the new size. Otherwise, the slice of octants is inserted into the Etree database.
+This adaptive refinement continues as the program steps down through the column. As $V_s$ velocities typically increase with depth, the program will tend to select larger octant sizes as it proceeds deeper into the column. This refinement algorithm ensures that each column is extracted at a resolution which supports the maximum simulation frequency, while at the same time allowing for considerable space savings at depth.
+
+TBD: MPI version
 
 \subsection{Miscellaneous Features}
 
