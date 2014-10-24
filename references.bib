@@ -105,6 +105,16 @@
   Timestamp                = {2013.11.04}
 }
 
+@InProceedings{Callaghan_2013_Proc,
+  Title			   = {Running A Seismic Workflow Application on Distributed Resources},
+  Author                   = {Callaghan, S. and Maechling, P. and Vahi, K. and Juve, G. and Deelman, E. and Cui, Y. and Poyraz, E. and Jordan, T. H.},
+  Booktitle                = {SC '13: Proc.~of the 2013 ACM/IEEE Int.~Conf.~for High Performance Computing, Networking, Storage and Analysis},
+  Year                     = {2013},
+  Month                    = {November},
+
+  Abstract                 = {In this poster, we present an approach to running workflow applications on distributed resources, including systems without support for remote job submission. We show how this approach extends the benefits of scientific workflows, such as job and data management, to large-scale applications on open-science HPC resources such as Blue Waters, Stampede, and USC HPCC. We demonstrate this approach with SCEC CyberShake, a physics-based seismic hazard application, to run over 470 million tasks via 32,000 jobs submitted to Blue Waters and Stampede.}
+}
+
 @InProceedings{Cui_2010_Proc,
   Title                    = {Scalable Earthquake Simulation on Petascale Supercomputers},
   Author                   = {Cui, Y. and Olsen, K.B. and Jordan, T.H. and Lee, K. and Zhou, J. and Small, P. and Roten, D. and Ely, G. and Panda, D.K. and Chourasia, A. and Levesque, J. and Day, S.M. and Maechling, P.},
@@ -517,6 +527,19 @@
   Timestamp                = {2014.07.30}
 }
 
+@Article{Wang_2014_BSSA,
+  Title                    = {Comparison of Probabilistic Seismic-Hazard Models Using Averaging-Based Factorization},
+  Author                   = {Wang, F. and Jordan, T. H.},
+  Journal                  = BSSA,
+  Year                     = {2014},
+  Number                   = {3},
+  Pages                    = {1230--1257},
+  Volume                   = {104},
+
+  Abstract                 = {We generalize the formulation of probabilistic seismic hazard analysis to accommodate simulation‐based hazard models by expressing the joint probability distribution among the parameters of a kinematically complete earthquake rupture forecast in terms of a conditional hypocenter distribution and a conditional slip distribution. The seismological hierarchy implied by these dependencies allows the logarithmic excitation functional to be exactly and uniquely decomposed into a series of uncorrelated terms that include zero‐mean averages of the site, source, hypocenter, and source‐complexity effects. We use this averaging‐based factorization to compare the CyberShake prototype hazard model developed by the Southern California Earthquake Center, CS11, with the empirical ground‐motion prediction equations (GMPEs) of the 2008 Next Generation Attenuation (NGA08) project. For horizontal‐response spectral accelerations at long periods (2–10 s), the basin and directivity effects of CS11 are substantially larger than those of the NGA08 GMPEs. Directivity–basin coupling and other 3D wave propagation effects not represented in the GMPEs contribute significantly to the excitation patterns in CS11. The total variance of the CS11 excitations is about 60\% higher than the NGA root mean square (rms) at the 2 s period but almost 30\% lower at 10 s. Relative to the NGA rms, the residual variance in CS11 at 2 s is larger than the aleatory variability in the NGA08 database by a factor of nearly 1.6. Recent CyberShake experiments with alternative source and structural models suggest that the high CS11 variances are due to an overestimation of the basin and directivity effects at short periods. The CyberShake site and path effects unexplained by the NGA08 models account for 40\%–50\% of total residual variance, suggesting that improvements to the simulation‐based hazard models could reduce the aleatory variability intrinsic to the current GMPEs by as much as 25\%.},
+  Doi                      = {10.1785/0120130263}
+}
+
 @Article{Wills_2006_BSSA,
   Title                    = {Developing a Map of Geologically Defined Site-Condition Categories for {C}alifornia},
   Author                   = {Wills, C. J. and Clahan, K. B.},
@@ -545,6 +568,20 @@
   Owner                    = {rtaborda},
   Timestamp                = {2014.07.31}
 }
+
+@Article{Zhao_2006_BSSA,
+  Title                    = {Strain Green's tensors, reciprocity, and their applications to seismic source and structure studies},
+  Author                   = {Zhao, L. and Chen, P. and Jordan, T.},
+  Journal                  = BSSA,
+  Year                     = {2006},
+  Number                   = {5},
+  Pages                    = {1753--1765},
+  Volume                   = {96},
+
+  Abstract                 = {Green’s function approach is widely used in modeling seismic waveform. The representation theorem expresses the wave field as the inner product of the moment tensor and the spatial gradients of the Green’s tensor. Standard practice in waveform calculations has been to compute the Green’s tensors first and then obtain their gradients by numerical differentiation. The reciprocity of the Green’s tensor enables us to express the wave field explicitly in terms of the strain Green’s tensor, a third-order tensor composed of the spatial gradients of the Green’s tensor elements. We propose here to use the strain Green’s tensors rather than the Green’s tensors themselves in computing the waveforms. By bypassing the need for Green’s tensors and directly using the strain Green’s tensors, we can improve the computational efficiency in waveform modeling while eliminating the possible errors from numerical differentiation. The strain Green’s tensor elements are also directly related to the partial derivatives of the waveforms with respect to moment tensor elements and structural parameters. Through the inversion of the focal mechanisms of 27 small events in the Los Angeles region, we demonstrate the effectiveness of the strain Green’s tensor database approach in quickly recovering source parameters based on realistic 3D models. We show that the same database can also be used to improve the efficiency and accuracy in computing the Fréchet kernels for tomography inversions.},
+  Doi                      = {10.1785/0120050253}
+}
+
 
 @comment{jabref-meta: selector_review:}
 
