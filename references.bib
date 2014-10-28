@@ -177,13 +177,23 @@
 }
 
 @InProceedings{Callaghan_2013_Proc,
-  Title			   = {Running A Seismic Workflow Application on Distributed Resources},
+  Title                    = {Running A Seismic Workflow Application on Distributed Resources},
   Author                   = {Callaghan, S. and Maechling, P. and Vahi, K. and Juve, G. and Deelman, E. and Cui, Y. and Poyraz, E. and Jordan, T. H.},
   Booktitle                = {SC '13: Proc.~of the 2013 ACM/IEEE Int.~Conf.~for High Performance Computing, Networking, Storage and Analysis},
   Year                     = {2013},
   Month                    = {November},
 
   Abstract                 = {In this poster, we present an approach to running workflow applications on distributed resources, including systems without support for remote job submission. We show how this approach extends the benefits of scientific workflows, such as job and data management, to large-scale applications on open-science HPC resources such as Blue Waters, Stampede, and USC HPCC. We demonstrate this approach with SCEC CyberShake, a physics-based seismic hazard application, to run over 470 million tasks via 32,000 jobs submitted to Blue Waters and Stampede.}
+}
+
+@InProceedings{Chen_2011_Proc,
+  Title                    = {Full-{3D} waveform tomography for {S}outhern {C}alifornia},
+  Author                   = {Chen, Po and Lee, E. and Jordan, T. H. and Maechling, P. J. and Denolle, M. and Beroza, G. C.},
+  Booktitle                = {Abstr.~SSA Annu.~Meet.},
+  Year                     = {2011},
+
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.10.27}
 }
 
 @InProceedings{Cui_2010_Proc,
@@ -340,6 +350,34 @@
   Owner                    = {Ricardo},
   Timestamp                = {2013.11.04},
   Url                      = {http://www.bssaonline.org/cgi/content/abstract/93/2/757}
+}
+
+@Article{Lee_2014_SRL,
+  Title                    = {Testing Waveform Predictions of 3D Velocity Models against Two Recent Los Angeles Earthquakes},
+  Author                   = {Lee, E.-J. and Chen, Po and Jordan, T. H.},
+  Journal                  = SRL,
+  Year                     = {2014},
+  Number                   = {6},
+  Pages                    = {in press},
+  Volume                   = {85},
+
+  Doi                      = {10.1785/0220140093},
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.10.27}
+}
+
+@Article{Lee_2014_JGR,
+  Title                    = {Full-{3-D} Tomography for crustal structure in southern {C}alifornia based on the Scattering-Integral and the Adjoint-Wavefield methods},
+  Author                   = {Lee, E.-J. and Chen, Po and Jordan, T. H. and Maechling, P. J. and Denolle, M. and Beroza, G. C.},
+  Journal                  = JGR,
+  Year                     = {2014},
+  Number                   = {8},
+  Pages                    = {6421--6451},
+  Volume                   = {119},
+
+  Doi                      = {10.1002/2014JB011346},
+  Owner                    = {rtaborda},
+  Timestamp                = {2014.10.27}
 }
 
 @Article{Lin_2010_BSSA,
@@ -680,7 +718,6 @@
   Abstract                 = {Green’s function approach is widely used in modeling seismic waveform. The representation theorem expresses the wave field as the inner product of the moment tensor and the spatial gradients of the Green’s tensor. Standard practice in waveform calculations has been to compute the Green’s tensors first and then obtain their gradients by numerical differentiation. The reciprocity of the Green’s tensor enables us to express the wave field explicitly in terms of the strain Green’s tensor, a third-order tensor composed of the spatial gradients of the Green’s tensor elements. We propose here to use the strain Green’s tensors rather than the Green’s tensors themselves in computing the waveforms. By bypassing the need for Green’s tensors and directly using the strain Green’s tensors, we can improve the computational efficiency in waveform modeling while eliminating the possible errors from numerical differentiation. The strain Green’s tensor elements are also directly related to the partial derivatives of the waveforms with respect to moment tensor elements and structural parameters. Through the inversion of the focal mechanisms of 27 small events in the Los Angeles region, we demonstrate the effectiveness of the strain Green’s tensor database approach in quickly recovering source parameters based on realistic 3D models. We show that the same database can also be used to improve the efficiency and accuracy in computing the Fréchet kernels for tomography inversions.},
   Doi                      = {10.1785/0120050253}
 }
-
 
 @comment{jabref-meta: selector_review:}
 
