@@ -1,13 +1,9 @@
 
-% ---------------------------------------------------------------------------------------------
-% TEMP FIGURE: Needs to be completed and improved in Illustrator and moved to final PDF dir.
 \begin{figure*}[ht!]
 	\centering
-%	\includegraphics
-%		[width=0.75\textwidth]
-%		{figures/raw-pdf/covered-areas}
-	\fbox{\begin{minipage}{\textwidth}\textcolor{red}{PENDING}\vspace{2in}\end{minipage}}
-	\caption{Construction of a mesh with the program ucvm2mesh.}
+	\includegraphics
+		[width=\textwidth]
+		{figures/pdf/ucvm-to-mesh}
+	\caption{Construction of a structured grid with the programs \texttt{ucvm2mesh} and \texttt{ucvm2mesh-mpi}. An important aspect of the meshing-to-grid process is that the discretized information payload (\vs{}, \vp{}, and $\rho$) is stored at the grid points. The querying and assignment process has a 1-to-1 mapping between the querying point and the grid node.}
 	\label{fig:meshing}
 \end{figure*}
-% ---------------------------------------------------------------------------------------------
