@@ -20,7 +20,7 @@ Note that the location of the package configuration file needs to be passed to t
 
 \subsubsection{The \textup{\texttt{ucvm2mesh}} command}
 
-This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a format designed to interface with a finite element code used to simulate dynamic rupture processes (also called SORD) \citep{Ely_2009_GJI}. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
 
 \begin{lstlisting}[
 	frame=none,
@@ -44,8 +44,7 @@ The command \texttt{ucvm2etree} builds a materialized model in the form of an et
 > ./ucvm2etree -f ./ucvm2etree_example.conf
 \end{lstlisting}
 
-Note that \texttt{ucvm2etree} is the basic serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be of the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
-
+Note that \texttt{ucvm2etree} is the serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be on the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
 
 \subsubsection{The \textup{\texttt{horizontal\_slice.py}} command}
 
