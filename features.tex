@@ -79,7 +79,9 @@ The basin structure of a velocity model may be extracted using the \texttt{basin
 
 \subsubsection{Visualization}
 
-The framework provdes a simple mechanism for visualizing slices and iso-surfaces from any configured velocity model, based on the scripting language Python and the Python modules \texttt{matplotlib} (with the basemap toolkit) \citep{Hunter_2007_CSE}, \texttt{numpy} (\url{http://www.numpy.org}), and \texttt{pyproj} (\url{https://code.google.com/p/pyproj}). These Python scripts function as wrappers to the basic single-core commands explained previously.
+The framework provdes a simple mechanism for visualizing slices and iso-surfaces from any configured velocity model, based on the scripting language Python and the Python modules \texttt{matplotlib} (with the basemap toolkit) \citep{Hunter_2007_CSE}, \texttt{numpy} %(\url{http://www.numpy.org})
+, and \texttt{pyproj} %(\url{https://code.google.com/p/pyproj})
+. These Python scripts function as wrappers to the basic single-core commands explained previously.
 
 Plots of horizontal and vertical slices may be generated with the \texttt{horizontal\_slice.py} and \texttt{cross\_section.py} scripts, respectively. Horizontal slices are oriented by a simple bounding box specified in geographic coordinates at a specified depth. Cross sections are oriented by two geographic endpoints and a depth range. In both cases, the slice region is discretized into a grid and each grid point is queried from the velocity model(s). The value plotted may be any one of the three material properties $V_p$, $V_s$, and $\rho$, or the Poisson ratio, $\nu$, of the velocities, given by:
 \begin{equation}
