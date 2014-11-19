@@ -94,12 +94,25 @@ In addition, basin maps for $V_s = 1000$ m/s and $V_s = 2500$ m/s may be plotted
 The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
 
 Introduction of small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate} (NOTE: cite Olsen). However, the payload of the grid points in this mesh are the perturbations (with a normalized amplitude) to apply to each of the three material properties $V_p$, $V_s$, and $\rho$ of the original mesh. Then, the command \texttt{ssh\_merge} is used to iterate through the cells of the two meshes and add the heterogeneities multiplied by a user-defined scaling factor to the model according to the following relation:
-\begin{equation}
-Perturbation \qquad calculation \qquad TBD
-\end{equation}
+
+\textcolor{blue}{DG: For $V_p$ and $V_s$:}
+
+\textcolor{blue}{$V_p$ = 1.0 / ((1 + (scaling factor * perturbation)) * slowness of $V_p$)}
+
+\textcolor{blue}{$V_s$ = 1.0 / ((1 + (scaling factor * perturbation)) * slowness of $V_s$)}
+
+\textcolor{blue}{For $\rho$:}
+
+\textcolor{blue}{$\rho$ = (1 + (scaling factor * perturbation)) * $\rho$}
+
 (NOTE: Explain the terms here). Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
 
 \subsubsection{Easy Install Utility}
 \label{sec:easy.install}
 
-TBD
+\textcolor{blue}{DG: UCVM includes a Python installation script, \texttt{ucvm\_setup.py}, that will install and configure the software automatically. This script works by querying the SCEC server to download a list of tested machine configurations. Example configurations include supercomputers, such as NCSA Blue Waters, as well as various distributions of Linux and Mac OS X. The UCVM setup script then compares the user's computer to these known configurations. If a match is found, the script then checks that the proper compilers are available and all the software dependecies are met. For example, on NCSA Blue Waters, it ensures that the user has the GNU compilers selected instead of the Cray ones. If the user's computer is not identified, UCVM has basic dependencies for which it checks.}
+
+\textcolor{blue}{Once all dependencies have been satisfied, the script then asks the user to which folder they would like to install UCVM and also which models they would like to download. All libraries and models have been standardized so that they can be downloaded in the same manner. First the file is downloaded, extracted, then a standard Linux "./configure, make, make install" sequence is run. The easy install utility ensures that the directory structure for UCVM is self contained. All library files are installed in "base UCVM directory/lib" and all models in "base UCVM directory/model".}
+
+\textcolor{blue}{Finally, the setup script compiles the UCVM source code with all the libraries and models that the user selected to be installed. The entire process is fully automated from start to finish. If an error is encountered, it notifies the user and also provides them with an e-mail address at SCEC to contact for further assistance.}
+
