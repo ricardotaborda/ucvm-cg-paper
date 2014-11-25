@@ -93,7 +93,14 @@ In addition, basin maps for $V_s = 1000$ m/s and $V_s = 2500$ m/s may be plotted
 
 The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
 
-Introduction of small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate} (NOTE: cite Olsen). However, the payload of the grid points in this mesh are the perturbations (with a normalized amplitude) to apply to each of the three material properties $V_p$, $V_s$, and $\rho$ of the original mesh. Then, the command \texttt{ssh\_merge} is used to iterate through the cells of the two meshes and add the heterogeneities multiplied by a user-defined scaling factor to the model according to the following relation:
+Introduction of small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate} (NOTE: cite Olsen). However, the payload of the grid points in this mesh are the perturbations (with a normalized amplitude) to apply to each of the three material properties $V_p$, $V_s$, and $\rho$ of the original mesh. Then, the command \texttt{ssh\_merge} is used to iterate through the cells of the two meshes and add the heterogeneities multiplied by a user-defined scaling factor to the model. The velocities and density of the original mesh are adjusted according to the following relations:
+\begin{equation}
+\begin{split}
+V' &= \frac{V}{(1+k\epsilon)}\\
+\rho' &= \frac{\rho}{(1+k\epsilon)}
+\end{split}
+\end{equation}
+Where $k$ is the scaling factor (Note: needs explanation), $\epsilon$ is the perturbation (Note: needs explanation), and $V$ is either of the original velocities $V_s$ or $V_p$.
 
 \textcolor{blue}{DG: For $V_p$ and $V_s$:}
 
@@ -105,7 +112,7 @@ Introduction of small-scale heterogeneities begins by constructing an identicall
 
 \textcolor{blue}{$\rho$ = (1 + (scaling factor * perturbation)) * $\rho$}
 
-(NOTE: Explain the terms here). Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
+Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
 
 \subsubsection{Easy Install Utility}
 \label{sec:easy.install}
