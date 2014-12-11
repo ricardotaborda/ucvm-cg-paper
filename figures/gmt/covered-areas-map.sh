@@ -34,6 +34,34 @@ gmt psbasemap -JM4i -Rd-127/-111/30/43.5 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT
 
 gmt pscoast -R -J -Slightblue -G200 -Df -Wthinnest -Na/thinnest -A300/0/4 -B -V -P -K -O >> ${PSOUTPUT}
 
+# CVM-NCI
+# ------------------------------------------------------------------------------
+
+gmt psxy -R -J -G${MYCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+-121.700000 35.300000     
+-126.000000 41.150000     
+-120.957499 43.349444     
+-116.931501 37.300656
+END
+
+gmt pstext -R -J -Dj0.1c -F+f+a+j -K -O >> ${PSOUTPUT} << END
+-126.000000 41.150000 ${MYFONT} 31 TL CVM-NCI
+END
+
+# CMRG
+# ------------------------------------------------------------------------------
+
+gmt psxy -R -J -G${MYCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+-124.500000 40.000000
+-124.500000 40.750000
+-123.750000 40.750000
+-123.750000 40.000000
+END
+
+gmt pstext -R -J -Dj0c/0.1c -F+f+a+j -K -O >> ${PSOUTPUT} << END
+-124.500000 40.000000 ${MYFONT} 0 TL CMRG
+END
+
 # CenCalVM Box
 # ------------------------------------------------------------------------------
 

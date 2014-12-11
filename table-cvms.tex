@@ -1,16 +1,12 @@
 
-\begin{table*}[ht!]
+\begin{table*}%[ht!]
 \centering
 \small
-\caption{List of velocity models (top section) and datasets (bottom section) currently supported by UCVM and their corresponding coverage region. Within UCVM, each model is identified by a string label. Some models can be automatically included when installing UCVM, while others require to be installed manually. In the coverage coordinates, the word global indicates models that are non-bounded and will return a payload regardless of the queried coordinates. However, the use of these models is intended for a particular region. Additional details are available in the references on the rightmost column. \textcolor{red}{I am of the opinion that models in red should be eliminated from the table unless we can fill out all the fields in the table. I've tried again to find info on these models without success. (RT)}}
+\caption{List of velocity models (top section) and datasets (bottom section) currently supported by UCVM and their corresponding coverage region. Within UCVM, each model is identified by a string label. Some models can be automatically included when installing UCVM, while others require to be installed manually. In the coverage coordinates, the word global indicates models that are non-bounded and will return a payload regardless of the queried coordinates. However, the use of these models is intended for a particular region. Additional details are available in the references on the rightmost column.}
 \begin{tabular}[]{llllll}
 %\\
 Model Name         & Region                & String Label & Installation & Coverage Coordinates & References \\
 \hline
-SCEC CVM-H         & Southern California   & cvmh          &  Automated   & -120.8620, 30.9565 & \citet{Suss_2003_JGR}        \\
-                   &                       &               &              & -113.3329, 30.9565 & \citet{Plesch_2011_SCEC}     \\
-                   &                       &               &              & -113.3329, 36.6129 & \citet{CVM-H_Manual}         \\
-                   &                       &               &              & -120.8620, 36.6129 &                              \\ 
 SCEC CVM-S         & Southern California   & cvms          &  Automated   & Irregular area     & \citet{Magistrale_1996_BSSA} \\
                    &                       &               &              & (see refs.)        & \citet{Magistrale_2000_BSSA} \\
                    &                       &               &              &                    & \citet{Kohler_2003_BSSA}     \\
@@ -18,11 +14,14 @@ SCEC CVM-S4.26     & Southern California   & cvmsi         &  Automated   & -116
                    &                       &               &              & -122.3000, 34.7835 & \citet{Lee_2014_JGR}         \\
                    &                       &               &              & -118.9475, 38.3035 & \citet{Lee_2014_SRL}         \\
                    &                       &               &              & -112.5182, 33.7819 &                              \\
-\color{red}
-SCEC CVM-S5        & Southern California   & cvms5         &  Automated   & -116.0000, 30.4499 & \textcolor{red}{MISSING}     \\
+SCEC CVM-S5        & Southern California   & cvms5         &  Automated   & -116.0000, 30.4499 & Under development$^\dagger$  \\
                    &                       &               &              & -122.3000, 34.7835 &                              \\
                    &                       &               &              & -118.9475, 38.3035 &                              \\
                    &                       &               &              & -112.5182, 33.7819 &                              \\
+SCEC CVM-H         & Southern California   & cvmh          &  Automated   & -120.8620, 30.9565 & \citet{Suss_2003_JGR}        \\
+                   &                       &               &              & -113.3329, 30.9565 & \citet{Plesch_2011_SCEC}     \\
+                   &                       &               &              & -113.3329, 36.6129 & \citet{CVM-H_Manual}         \\
+                   &                       &               &              & -120.8620, 36.6129 &                              \\ 
 Carl Tape SoCal    & Southern California   & tape          &  Manual      & -121.8549, 36.7301 & \citet{Tape_2010_GJI}        \\
                    &                       &               &              & -121.5939, 32.1919 &                              \\
                    &                       &               &              & -114.8286, 32.2616 &                              \\
@@ -31,34 +30,42 @@ USGS CenCalVM      & Central California    & cencal        &  Automated   & -126
                    &                       &               &              & -123.2732, 41.4849 & \citet{Brocher_2006_Proc}    \\
                    &                       &               &              & -118.9445, 36.7022 &                              \\
                    &                       &               &              & -121.9309, 35.0090 &                              \\
+SCEC CVM-NCI       & Northern California   & cvmnci        &  Manual      & -121.7000, 35.3000 & \textcolor{red}{MISSING}     \\
+                   &                       &               &              & -126.0000, 41.1500 &                              \\
+                   &                       &               &              & -120.9575, 43.3494 &                              \\
+                   &                       &               &              & -116.9315, 37.3007 &                              \\
 Lin-Thurber        & California Statewide  & lt            &  Manual      & -126.9210, 39.8816 & \citet{Lin_2010_BSSA}        \\
                    &                       &               &              & -121.4117, 43.0597 &                              \\
                    &                       &               &              & -112.8281, 33.4362 &                              \\
                    &                       &               &              & -118.1781, 30.2581 &                              \\
-Hadley-Kanamori 1D & California            & 1d            &  Automated   & Global{$^\dagger$} & \cite{Kanamori_1975_Chap}    \\
-                   &                       &               &              &                    & \cite{Hadley_1977_GSAB}      \\
-\color{red}
-Broadband 1D       & Whittier Narrows      & bbp1d         &  Automated   & Global{$^\dagger$} & \textcolor{red}{MISSING}     \\
-\color{red}
-SCEC CVM-NCI      & \textcolor{red}{MISSING} & cvmnci     &  Manual      & \textcolor{red}{MISSING} & \textcolor{red}{MISSING}\\
-\color{red}
-Graves             & Cape Mendocino        & cmrg          &  Manual      & \textcolor{red}{MISSING} & \textcolor{red}{MISSING}     \\
+Graves             & Cape Mendocino        & cmrg          &  Manual      & -124.5000, 40.0000 & \citet{Graves_1994_SSA}      \\
+                   &                       &               &              & -124.5000, 40.7500 &                              \\
+                   &                       &               &              & -123.7500, 40.7500 &                              \\
+                   &                       &               &              & -123.7500, 40.0000 &                              \\
 USGS WFCVM         & Wasatch Front, Utah   & wfcvm         &  Manual      & -111.1666, 39.6667 & \citet{Magistrale_2006_Tech} \\
                    &                       &               &              & -111.1666, 41.7500 &                              \\
                    &                       &               &              & -113.0833, 41.7500 &                              \\
                    &                       &               &              & -113.0833, 39.6667 &                              \\
+Hadley-Kanamori 1D & California            & 1d            &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
+                   &                       &               &              &                    & \citet{Hadley_1977_GSAB}     \\
+\color{red}
+Broadband 1D       & Whittier Narrows      & bbp1d         &  Automated   & Global$^\ddagger$  & \textcolor{red}{MISSING}     \\
 \hline
 Ely GTL            & Southern California   & elygtl        &  Automated   & -122.5410, 30.7046 & \citet{Ely_2010_AGU}         \\
                    &                       &               &              & -112.9958, 30.7046 &                              \\
                    &                       &               &              & -112.9958, 38.5460 &                              \\
                    &                       &               &              & -122.5410, 38.5460 &                              \\
-\color{red}
-1D GTL             & Southern California   & 1dgtl         &  Automated   & Global{$^\dagger$} & \textcolor{red}{MISSING}     \\
-\vsthirty{} Maps   & Southern California   & ucvm, yong    &              & Rule-based         & \citet{Wills_2006_BSSA}      \\
-                   &                       &               &              & (see refs.)        & \citet{Wald_2007_BSSA}       \\
+1D GTL             & Southern California   & 1dgtl         &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
+                   &                       &               &              &                    & \citet{Hadley_1977_GSAB}     \\
+DEM                & Southern California   & n/a           &              & Rule-based         & \citet{Gesch_2002_PERS}      \\
+                   &                       &               &              & (see refs.)        & \citet{Gesch_2007_Chap}      \\
+\vsthirty{} Maps   & Southern California   & ucvm, yong    &              & ?                  & \citet{Wills_2006_BSSA}      \\
+                   &                       &               &              &                    & \citet{Wald_2007_BSSA}       \\
                    &                       &               &              &                    & \citet{Yong_2012_BSSA}       \\
+                   &                       &               &              &                    &                              \\
 \hline
-\multicolumn{6}{l}{$\dagger$ \footnotesize Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
+\multicolumn{6}{l}{$\dagger$ \footnotesize Explanation.}\\
+\multicolumn{6}{l}{$\ddagger$ \footnotesize Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
 \\
 \end{tabular}
 \label{tab:cvms}
