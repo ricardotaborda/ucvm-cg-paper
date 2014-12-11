@@ -10,14 +10,14 @@ Model Name         & Region                & String Label & Installation & Cover
 SCEC CVM-S         & Southern California   & cvms          &  Automated   & Irregular area     & \citet{Magistrale_1996_BSSA} \\
                    &                       &               &              & (see refs.)        & \citet{Magistrale_2000_BSSA} \\
                    &                       &               &              &                    & \citet{Kohler_2003_BSSA}     \\
-SCEC CVM-S4.26     & Southern California   & cvmsi         &  Automated   & -116.0000, 30.4499 & \citet{Chen_2011_Proc}       \\
-                   &                       &               &              & -122.3000, 34.7835 & \citet{Lee_2014_JGR}         \\
+SCEC CVM-S4.26,    & Southern California   & cvmsi,        &  Automated   & -116.0000, 30.4499 & \citet{Chen_2011_Proc}       \\
+SCEC CVM-S5$^\dagger$&                     & cvms5         &              & -122.3000, 34.7835 & \citet{Lee_2014_JGR}         \\
                    &                       &               &              & -118.9475, 38.3035 & \citet{Lee_2014_SRL}         \\
                    &                       &               &              & -112.5182, 33.7819 &                              \\
-SCEC CVM-S5        & Southern California   & cvms5         &  Automated   & -116.0000, 30.4499 & Under development$^\dagger$  \\
-                   &                       &               &              & -122.3000, 34.7835 &                              \\
-                   &                       &               &              & -118.9475, 38.3035 &                              \\
-                   &                       &               &              & -112.5182, 33.7819 &                              \\
+%SCEC CVM-S5        & Southern California   & cvms5         &  Automated   & -116.0000, 30.4499 & Under development$^\dagger$  \\
+%                   &                       &               &              & -122.3000, 34.7835 &                              \\
+%                   &                       &               &              & -118.9475, 38.3035 &                              \\
+%                   &                       &               &              & -112.5182, 33.7819 &                              \\
 SCEC CVM-H         & Southern California   & cvmh          &  Automated   & -120.8620, 30.9565 & \citet{Suss_2003_JGR}        \\
                    &                       &               &              & -113.3329, 30.9565 & \citet{Plesch_2011_SCEC}     \\
                    &                       &               &              & -113.3329, 36.6129 & \citet{CVM-H_Manual}         \\
@@ -46,7 +46,7 @@ USGS WFCVM         & Wasatch Front, Utah   & wfcvm         &  Manual      & -111
                    &                       &               &              & -111.1666, 41.7500 &                              \\
                    &                       &               &              & -113.0833, 41.7500 &                              \\
                    &                       &               &              & -113.0833, 39.6667 &                              \\
-Hadley-Kanamori 1D & California            & 1d            &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
+Hadley-Kanamori 1D & Southern California   & 1d            &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
                    &                       &               &              &                    & \citet{Hadley_1977_GSAB}     \\
 \color{red}
 Broadband 1D       & Whittier Narrows      & bbp1d         &  Automated   & Global$^\ddagger$  & \textcolor{red}{MISSING}     \\
@@ -55,17 +55,18 @@ Ely GTL            & Southern California   & elygtl        &  Automated   & -122
                    &                       &               &              & -112.9958, 30.7046 &                              \\
                    &                       &               &              & -112.9958, 38.5460 &                              \\
                    &                       &               &              & -122.5410, 38.5460 &                              \\
-1D GTL             & Southern California   & 1dgtl         &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
+1D GTL$^\S$        & Southern California   & 1dgtl         &  Automated   & Global$^\ddagger$  & \citet{Kanamori_1975_Chap}   \\
                    &                       &               &              &                    & \citet{Hadley_1977_GSAB}     \\
-DEM                & Southern California   & n/a           &              & Rule-based         & \citet{Gesch_2002_PERS}      \\
-                   &                       &               &              & (see refs.)        & \citet{Gesch_2007_Chap}      \\
-\vsthirty{} Maps   & Southern California   & ucvm, yong    &              & ?                  & \citet{Wills_2006_BSSA}      \\
+DEM                & Southern California   & n/a           &              & \textcolor{red}{PENDING} & \citet{Gesch_2002_PERS}      \\
+                   &                       &               &              &                    & \citet{Gesch_2007_Chap}      \\
+\vsthirty{} Maps   & Southern California   & ucvm, yong    &              & \textcolor{red}{MISSING} & \citet{Wills_2006_BSSA}      \\
                    &                       &               &              &                    & \citet{Wald_2007_BSSA}       \\
                    &                       &               &              &                    & \citet{Yong_2012_BSSA}       \\
                    &                       &               &              &                    &                              \\
 \hline
-\multicolumn{6}{l}{$\dagger$ \footnotesize Explanation.}\\
-\multicolumn{6}{l}{$\ddagger$ \footnotesize Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
+\multicolumn{6}{l}{$\dagger$\quad\footnotesize The model CVM-S5 is an updated version of CVM-S4.26 that is currently under development and scheduled to be released in 2015.}\\
+\multicolumn{6}{l}{$\ddagger$\quad\footnotesize Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
+\multicolumn{6}{l}{$\S$\quad\footnotesize Same as the Hadley-Kanamori 1D to allow UCVM treating this 1D structure as both a CVM and a GTL.}\\
 \\
 \end{tabular}
 \label{tab:cvms}
