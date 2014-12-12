@@ -93,21 +93,22 @@ This scheme, while more complicated than the sequential program, allows extracti
 
 The UCVM framework encompasses a set of minor features intended to support typical use cases, as well as to enhance ease-of-use. These miscellaneous features are described in greater detail in the following sections.
 
-\subsubsection{Querying $V_s$ Iso-surfaces}
+\subsubsection{Querying \vs{} Iso-surfaces}
 
-The basin structure of a velocity model may be extracted using the \texttt{basin\_query} command. This program accepts a shear wave velocity threshold $V_{thresh}$, a step interval $d_z$ along the vertical axis, one or more velocity models, and a list of (latitude, longitude) geographic coordinates. The program begins by tiling the velocity models to form the meta-model. Then, for each input coordinate, the meta-model is queried at a sequence of depths, starting at the surface and proceeding downward with step size $d_z$ meters until either the configured $V_{thresh}$ is exceeded or a maximum search depth is reached. The shallowest depth at which this transition occurs, or the maximum depth if no transition was found, is reported to the user. An MPI version of this command, \texttt{basin\_query\_mpi}, is provided to quickly generate maps for large sets of coordinates.
+The basin structure of a velocity model may be extracted using the \texttt{basin\_query} command. This program accepts a shear wave velocity threshold ($V_{_{\mathrm{thresh}}}$), a step interval along the vertical axis ($d_z$), one or more velocity models, and a list of (latitude, longitude) geographic coordinates. The program begins by tiling the velocity models to form the meta-model. Then, for each input coordinate, the meta-model is queried at a sequence of depths, starting at the surface and proceeding downward with step size $d_z$ meters until either the configured $V_{_{\mathrm{thresh}}}$ is exceeded or a maximum search depth is reached. The shallowest depth at which this transition occurs, or the maximum depth if no transition was found, is reported to the user. An MPI version of this command, \texttt{basin\_query\_mpi}, is provided to quickly generate maps for large sets of coordinates.
 
 \subsubsection{Visualization}
 
-The framework provdes a simple mechanism for visualizing slices and iso-surfaces from any configured velocity model, based on the scripting language Python and the Python modules \texttt{matplotlib} (with the basemap toolkit) \citep{Hunter_2007_CSE}, \texttt{numpy} %(\url{http://www.numpy.org})
-, and \texttt{pyproj} %(\url{https://code.google.com/p/pyproj})
-. These Python scripts function as wrappers to the basic single-core commands explained previously.
+The framework provides a simple mechanism for visualizing slices and iso-surfaces from any configured velocity model, based on the scripting language Python and the Python modules \texttt{matplotlib}, \texttt{numpy}, and \texttt{pyproj}. These Python scripts function as wrappers to the basic single-core commands explained previously.
 
-Plots of horizontal and vertical slices may be generated with the \texttt{horizontal\_slice.py} and \texttt{cross\_section.py} scripts, respectively. Horizontal slices are oriented by a simple bounding box specified in geographic coordinates at a specified depth. Cross sections are oriented by two geographic endpoints and a depth range. In both cases, the slice region is discretized into a grid and each grid point is queried from the velocity model(s). The value plotted may be any one of the three material properties $V_p$, $V_s$, and $\rho$, or the Poisson ratio, $\nu$, of the velocities, given by:
+Plots of horizontal and vertical slices may be generated with the \texttt{horizontal\_slice.py} and \texttt{cross\_section.py} scripts, respectively. Horizontal slices are oriented by a simple bounding box specified in geographic coordinates at a specified depth. Cross sections are oriented by two geographic endpoints and a depth range. In both cases, the slice region is discretized into a grid and each grid point is queried from the velocity model(s). The value plotted may be any one of the three material properties (\vp{}, \vs{}, or $\rho$), or the Poisson ratio ($\nu$) given by:
+%
 \begin{equation}
-\nu = \frac{V_p}{V_S}
+	\nu = \frac{ V_{\mathrm{P}} }{ V_{\mathrm{S}} }
+	\hspace{0.3em}.
 \end{equation}
-In addition, basin maps for $V_s = 1000$ m/s and $V_s = 2500$ m/s may be plotted using the \texttt{z10.py} and \texttt{z25.py} scripts, respectively. These operate analogously to the \texttt{basin\_query} command described previously. Lastly, generation of $V_{s30}$ maps is supported with the \texttt{vs30.py} script. In all cases, the output images are saved to disk in Portable Network Graphics (PNG) format.
+
+In addition, basin maps for \vseq{1000} and \vseq{2500} may be plotted using the \texttt{z10.py} and \texttt{z25.py} scripts, respectively. These operate analogously to the \texttt{basin\_query} command described previously. Similarly, generation of \vsthirty{} maps is supported with the \texttt{vs30.py} script. In all cases, the output images are saved to disk in Portable Network Graphics (PNG) format.
 
 \subsubsection{Small-scale Heterogeneities}
 
