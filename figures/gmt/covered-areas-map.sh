@@ -5,12 +5,13 @@ clear
  PSOUTPUT=${OUTPUT}.ps
 PDFOUTPUT=${OUTPUT}.pdf
 
-CVMCOLOR=green@90
-CVMCOLORTHICK=green@80
+CVMCOLOR=springgreen1@90
+CVMCOLORTHICK=springgreen1@80
 GTLCOLOR=orange1@90
 MYFONT=6p,Helvetica-Bold
-MYBOXLINE=0.5p,0/80/30
-MYBOXLINETHICK=0.7p,0/80/30
+CVMBOXLINE=0.5p,green4
+CVMBOXLINETHICK=0.7p,green4
+GTLBOXLINE=0.5p,darkorange3
 
 # Set GMT constants
 # ------------------------------------------------------------------------------
@@ -38,12 +39,12 @@ gmt psbasemap -JPoly/4i -Rd-131/-109/27/46.5 -Xc -Yc -B2/2WSne -V -P -K > ${PSOU
 # gmt psbasemap -JPoly/4i -Rd-127/-111/30/42 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT}
 # gmt psbasemap -JT-119/36/4i -Rd-127/-111/30/42 -Xc -Yc -B2/1WSne -V -P -K > ${PSOUTPUT}
 
-gmt pscoast -R -J -Slightblue -G200 -Df -Wthinnest -Na/thinnest,white -A300/0/4 -B -V -P -K -O >> ${PSOUTPUT}
+gmt pscoast -R -J -Slightblue -G200 -Df -Wthinnest,steelblue4 -Na/thinnest,white -A300/0/4 -B -V -P -K -O >> ${PSOUTPUT}
 
 # Vs30/DEM Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${GTLCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${GTLCOLOR} -W${GTLBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -129.7500 40.7500
 -121.0950 45.7772
 -109.9632 32.0737
@@ -61,7 +62,7 @@ END
 # Ely-GTL Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${GTLCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${GTLCOLOR} -W${GTLBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -122.5410 30.7046
 -112.9958 30.7046
 -112.9958 38.5460
@@ -75,7 +76,7 @@ END
 # CVM-NCI
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -121.700000 35.300000     
 -126.000000 41.150000     
 -120.957499 43.349444     
@@ -89,7 +90,7 @@ END
 # CenCalVM Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -126.353173	39.680558
 -123.273199	41.484869
 -118.944514	36.702176
@@ -103,7 +104,7 @@ END
 # Lin-Thurber
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -126.9210 39.8816
 -121.4117 43.0597
 -112.8281 33.4362
@@ -117,7 +118,7 @@ END
 # CVM-H Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -120.8620 30.9564
 -113.3329 30.9564
 -113.3329 36.6129
@@ -131,7 +132,7 @@ END
 # Carl Tape SoCal
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -121.8549 36.7301
 -121.5939 32.1919
 -114.8286 32.2616
@@ -145,7 +146,7 @@ END
 # CVM-S4.26 / CVM-S5 Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLORTHICK} -W${MYBOXLINETHICK} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLORTHICK} -W${CVMBOXLINETHICK} -A -K -O >> ${PSOUTPUT} << END
 -116.0000 30.4499
 -122.3000 34.7835
 -118.9475 38.3035
@@ -163,7 +164,7 @@ END
 # CMRG
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -124.500000 40.000000
 -124.500000 40.750000
 -123.750000 40.750000
@@ -177,7 +178,7 @@ END
 # Wasatch Box
 # ------------------------------------------------------------------------------
 
-gmt psxy -R -J -G${CVMCOLOR} -W${MYBOXLINE} -A -K -O >> ${PSOUTPUT} << END
+gmt psxy -R -J -G${CVMCOLOR} -W${CVMBOXLINE} -A -K -O >> ${PSOUTPUT} << END
 -111.1666 39.6667
 -111.1666 41.7500
 -113.0833 41.7500
