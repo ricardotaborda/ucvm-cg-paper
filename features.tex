@@ -131,8 +131,11 @@ and
 	\hspace{0.3em},
 \end{equation}
 %
-where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that, in effect, the perturbation factors in equation (\ref{eq:ssh}) are applied to the slownesses and not to the velocities.
+where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that in the case of the velocities, the perturbation factors in equation (\ref{eq:ssh}) are actually applied to the slownesses and not to the velocities.
 
+% *****
+% I changed this section considerably, so I am keeping a copy of the original text written by David and Patric
+% *****
 
 %The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
 
@@ -156,6 +159,8 @@ where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively 
 %\textcolor{blue}{$\rho$ = (1 + (scaling factor * perturbation)) * $\rho$}
 %
 %Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
+
+% *****
 
 \subsubsection{Easy Install Utility}
 \label{sec:easy.install}
