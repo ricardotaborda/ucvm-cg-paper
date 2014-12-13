@@ -117,16 +117,16 @@ As simulations using CVMs tend to advance faster than the models themselves, and
 The introduction of these small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate}. This process creates a mesh whose grid point payloads are perturbations (with a normalized amplitude). These perturbations are generated following the algorithms previously used by \citet{Withers_2013_SCEC} and \citet{Savran_2014_SSA}. Then, the perturbations are applied to the material properties \vp{}, \vs{}, and $\rho$ of the original mesh using the command \texttt{ssh\_merge}, which iterates through the cells of the two meshes and adds the heterogeneities multiplied by a user-defined scaling factor to the the original material properties. This adjustment is done according to the following relations.
 %
 \begin{equation}
-	V_{\mathrm{P}}^{\mathrm{new}} &= \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
 	\hspace{0.3em},
 	\hspace{0.6em}
-	V_{\mathrm{P}}^{\mathrm{new}} &= \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
 \end{equation}
 %
 and
 %
 \begin{equation}
-	\rho^{\mathrm{new}} &= \frac{ \rho^{\mathrm{old}} }{ (1 + k \epsilon) }
+	\rho^{\mathrm{new}} = \frac{ \rho^{\mathrm{old}} }{ (1 + k \epsilon) }
 	\hspace{0.3em},
 \end{equation}
 %
