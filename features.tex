@@ -117,20 +117,21 @@ As simulations using CVMs tend to advance faster than the models themselves, and
 The introduction of these small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate}. This process creates a mesh whose grid point payloads are perturbations (with a normalized amplitude). These perturbations are generated following the algorithms previously used by \citet{Withers_2013_SCEC} and \citet{Savran_2014_SSA}. Then, the perturbations are applied to the material properties \vp{}, \vs{}, and $\rho$ of the original mesh using the command \texttt{ssh\_merge}, which iterates through the cells of the two meshes and adds the heterogeneities multiplied by a user-defined scaling factor to the the original material properties. This adjustment is done according to the following relations.
 %
 \begin{equation}
+\label{eq:ssh}
 	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
 	\hspace{0.3em},
 	\hspace{0.6em}
-	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+	V_{\mathrm{S}}^{\mathrm{new}} = \frac{ V_{\mathrm{S}}^{\mathrm{old}} }{ (1 + k \epsilon) }
 \end{equation}
 %
 and
 %
 \begin{equation}
-	\rho^{\mathrm{new}} = \frac{ \rho^{\mathrm{old}} }{ (1 + k \epsilon) }
+	\rho^{\mathrm{new}} = (1 + k \epsilon) \, \rho^{\mathrm{old}}
 	\hspace{0.3em},
 \end{equation}
 %
-where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}.
+where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that, in effect, the perturbation factors in equation (\ref{eq:ssh}) are applied to the slownesses and not to the velocities.
 
 
 %The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
