@@ -1,0 +1,83 @@
+
+\subsection{Miscellaneous Features}
+
+The UCVM framework encompasses a set of minor features intended to support typical use cases, as well as to enhance ease-of-use. These miscellaneous features are described in greater detail in the following sections.
+
+\subsubsection{Querying \vs{} Iso-Surfaces}
+
+The basin structure of a velocity model may be extracted using the \texttt{basin\_query} command. This program accepts a shear wave velocity threshold ($V_{_{\mathrm{thresh}}}$), a step interval along the vertical axis ($d_z$), one or more velocity models, and a list of (latitude, longitude) geographic coordinates. The program begins by tiling the velocity models to form the meta-model. Then, for each input coordinate, the meta-model is queried at a sequence of depths, starting at the surface and proceeding downward with step size $d_z$ meters until either the configured $V_{_{\mathrm{thresh}}}$ is exceeded or a maximum search depth is reached. The shallowest depth at which this transition occurs, or the maximum depth if no transition was found, is reported to the user. An MPI version of this command, \texttt{basin\_query\_mpi}, is provided to quickly generate maps for large sets of coordinates.
+
+\subsubsection{Visualization}
+
+The framework provides a simple mechanism for visualizing slices and iso-surfaces from any configured velocity model, based on the scripting language Python and the Python modules \texttt{matplotlib}, \texttt{numpy}, and \texttt{pyproj}. These Python scripts function as wrappers to the basic single-core commands explained previously.
+
+Plots of horizontal and vertical slices may be generated with the \texttt{horizontal\_slice.py} and \texttt{cross\_section.py} scripts, respectively. Horizontal slices are oriented by a simple bounding box specified in geographic coordinates at a specified depth. Cross sections are oriented by two geographic endpoints and a depth range. In both cases, the slice region is discretized into a grid and each grid point is queried from the velocity model(s). The value plotted may be any one of the three material properties (\vp{}, \vs{}, or $\rho$), or the Poisson ratio ($\nu$) given by:
+%
+\begin{equation}
+	\nu = \frac{ V_{\mathrm{P}} }{ V_{\mathrm{S}} }
+	\hspace{0.3em}.
+\end{equation}
+
+In addition, basin maps for \vseq{1000} and \vseq{2500} may be plotted using the \texttt{z10.py} and \texttt{z25.py} scripts, respectively. These operate analogously to the \texttt{basin\_query} command described previously. Similarly, generation of \vsthirty{} maps is supported with the \texttt{vs30.py} script. In all cases, the output images are saved to disk in Portable Network Graphics (PNG) format.
+
+\subsubsection{Small-Scale Heterogeneities}
+
+In recent years, simulations using CVMs have advanced faster than models themselves. This is part due to an increasing interest in broadband simulations with higher deterministic maximum frequencies (5--10 Hz) suitable for engineering applications. As a result, needs have arisen requiring models not only to accurately represent a region's structure at the geologic and geotechnical scales, but also to represent the scattering characteristics typical of heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, by means of which material properties are modified to reflect the changes caused by such heterogeneities.
+
+The introduction of these small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate}. This process creates a mesh whose grid point payloads are perturbations (with a normalized amplitude). These perturbations are generated following the algorithms previously used by \citet{Withers_2013_SCEC} and \citet{Savran_2014_SSA}. Then, the perturbations are applied to the material properties \vp{}, \vs{}, and $\rho$ of the original mesh using the command \texttt{ssh\_merge}, which iterates through the cells of the two meshes and adds the heterogeneities multiplied by a user-defined scaling factor to the the original material properties. This adjustment is done according to the  relations:
+%
+\begin{equation}
+\label{eq:ssh}
+	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+	\hspace{0.3em},
+	\hspace{0.6em}
+	V_{\mathrm{S}}^{\mathrm{new}} = \frac{ V_{\mathrm{S}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+\end{equation}
+%
+and
+%
+\begin{equation}
+	\rho^{\mathrm{new}} = (1 + k \epsilon) \, \rho^{\mathrm{old}}
+	\hspace{0.3em},
+\end{equation}
+%
+where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that in the case of the velocities, the perturbation factors in equation (\ref{eq:ssh}) are actually applied to the slownesses and not to the velocities.
+
+% *****
+% I changed this section considerably, so I am keeping a copy of the original text written by David and Patric
+% *****
+
+%The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
+
+%Introduction of small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate} (NOTE: cite Olsen). However, the payload of the grid points in this mesh are the perturbations (with a normalized amplitude) to apply to each of the three material properties $V_p$, $V_s$, and $\rho$ of the original mesh. Then, the command \texttt{ssh\_merge} is used to iterate through the cells of the two meshes and add the heterogeneities multiplied by a user-defined scaling factor to the model. The velocities and density of the original mesh are adjusted according to the following relations:
+%\begin{equation}
+%\begin{split}
+%V' &= \frac{V}{(1+k\epsilon)}\\
+%\rho' &= \frac{\rho}{(1+k\epsilon)}
+%\end{split}
+%\end{equation}
+%Where $k$ is the scaling factor (Note: needs explanation), $\epsilon$ is the perturbation (Note: needs explanation), and $V$ is either of the original velocities $V_s$ or $V_p$.
+%
+%\textcolor{blue}{DG: For $V_p$ and $V_s$:}
+%
+%\textcolor{blue}{$V_p$ = 1.0 / ((1 + (scaling factor * perturbation)) * slowness of $V_p$)}
+%
+%\textcolor{blue}{$V_s$ = 1.0 / ((1 + (scaling factor * perturbation)) * slowness of $V_s$)}
+%
+%\textcolor{blue}{For $\rho$:}
+%
+%\textcolor{blue}{$\rho$ = (1 + (scaling factor * perturbation)) * $\rho$}
+%
+%Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
+
+% *****
+
+\subsubsection{Easy Install Utility}
+\label{sec:easy.install}
+
+Finally, we describe \texttt{ucvm\_setup.py}. This is a Python installation script included in the platform distribution. It installs and configures UCVM automatically, including select models. The script works by querying the SCEC server to download a list of tested machine configurations. Example configurations include high-performance parallel systems such as Blue Waters at the National Center for Supercomputing Applications (NCSA), as well as various distributions of Linux and Mac OS X. First, the script compares the user's computer to these known configurations. If a match is found, the script then checks that the proper compilers are available and all the software dependencies are met. For example, on NCSA's Blue Waters, it ensures that the GNU compilers are properly loaded in the user environment. If the current system is not identified, \texttt{ucvm\_setup.py} checks if all UCVM basic dependencies are available. Messages are displayed to the user as the installation progresses.
+
+Once all dependencies have been satisfied, the script prompts for the preferred installation directory (\texttt{UCV\_MDIR}) and the models to be downloaded and installed. All libraries and models have been standardized so that they can be downloaded in the same manner. After a file is downloaded and extracted, a standard Linux \texttt{configure}, \texttt{make}, and \texttt{make} \texttt{install} sequence is run. The \texttt{ucvm\_setup.py} utility ensures that the directory structure for UCVM is self contained. All library files are installed in \texttt{\$UCVM\_DIR/lib} and all models in \texttt{\$UCVM\_DIR/model}.
+
+Finally, the installation script compiles the UCVM source code with all the libraries and models selected by the user. The entire process is fully automated from start to finish. If problems are encountered along the way, an error message is displayed. The message provides a summary of the error instance and includes the contact information (e-mail address) of the SCEC software support team for further assistance.
+

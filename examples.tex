@@ -1,52 +1,136 @@
 
 \section{Examples}
 
-TBD
+The previous sections dealt with the main software architecture and program utilities of the UCVM framework. Here we present a few practical examples that demonstrate how to retrieve and plot data from models registered in the framework. Space limitation prevent us from providing examples for all utilities. However, the reader can consult the General User Guide (see Table \ref{tab:manuals}) for additional examples and details, which also includes examples of how to use the UCVM API in C and Fortran codes.
 
-\subsubsection{The \textup{\texttt{ucvm\_query}} command}
+\subsection{Querying Velocity Models}
 
-Here is an example of how to run this command.
-
-\begin{lstlisting}[
-	frame=none,
-	basewidth={0.45em,0.4em},
-	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm_query -f $UCVM_DIR/conf/ucvm.conf -m cvms
-\end{lstlisting}
-
-Note that the location of the package configuration file needs to be passed to the command using the flag ``\texttt{-f}'' and that the model to be used is set with the ``\texttt{-m}'' flag. 
-
-\subsubsection{The \textup{\texttt{ucvm2mesh}} command}
-
-This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a finite element code used to simulate dynamic rupture processes. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+Querying velocity models is the most basic functionality provided by UCVM. From a terminal, this can be done simply by invoking the command-line tool \texttt{ucvm\_query} as follows.
 
 \begin{lstlisting}[
 	frame=none,
 	basewidth={0.45em,0.4em},
 	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
-	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm2mesh -f ./ucvm2mesh_example.conf
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr},style=optional]
+> ./ucvm_query -f $UCVM_DIR/conf/ucvm.conf -m cvms @< [input]@
 \end{lstlisting}
 
-\subsubsection{The \textup{\texttt{ucvm2etree}} command}
-
-The command \texttt{ucvm2etree} builds a materialized model in the form of an etree database, which uses an octree unstructured mesh-like format that adjust octant sizes to a specific resolution based on the material properties in the CVM being used at every point in a given volume. Resulting etrees built using this command are stand-alone discrete representations of a given velocity mode, and can be used as input models for other operations using UCVM. They can also be queried separately using APIs distributed with the etree library. In wave propagation problems, etrees are used by the code Hercules \citep{Tu_2006_SC, Taborda_2010_Tech} in earthquake ground motion simulations. As in the previous case, this command takes an argument input configuration file. The following example shows how to execute this command.
+\noindent
+Here, \texttt{ucvm.conf} is a configuration file which is created at installation time and contains information about the models available in the framework as installed; the flag ``\texttt{-f}'' indicates the location of this configuration file; and the flag ``\texttt{-m}'' preceeds the label of the model from which properties are to be retrieved. The input, which may be optionally given in a file, are the longitude, latitude, and depth of the queried point. Similarly, one can also query a model for the depth of a threshold velocity using the \texttt{basin\_query} command.
 
 \begin{lstlisting}[
 	frame=none,
 	basewidth={0.45em,0.4em},
 	basicstyle=\ttfamily\footnotesize,breaklines=true,
-	linewidth=0.98\columnwidth,xleftmargin=0.07\columnwidth,
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
 	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
-> ./ucvm2etree -f ./ucvm2etree_example.conf
+> ./basin_query $UCVM_DIR/conf/ucvm.conf -m cvms -v 2500
 \end{lstlisting}
 
-Note that \texttt{ucvm2etree} is the basic serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be of the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
+\noindent
+In this case, the configuration file parameter requires no flag, and the flag ``\texttt{-v}'' indicates the threshold velocity.
 
+\subsection{Creating Structured and Semi-Unstructured Meshes}
 
-\subsubsection{The \textup{\texttt{horizontal\_slice.py}} command}
+As described before, the UCVM programs \texttt{ucvm2mesh} and \texttt{ucvm2etree} can be used to create materialized velocity models in the form of regular grids or semi-unstructured meshes, respectively. These two utilities are invoked by typing:
 
-TBD
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2mesh -f ./ucvm2mesh.conf
+\end{lstlisting}
+
+\noindent
+and
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+> ./ucvm2etree -f ./ucvm2etree.conf
+\end{lstlisting}
+
+\noindent
+Here, the \texttt{ucvm2mesh.conf} and \texttt{ucvm2etree.conf} are configuration files that specify the model(s) to be queried, the coordinates and dimensions of the regional domain to be meshed, and the projection to be used, as well as the discretization parameters (e.g., gridding size). Paths to the output binary file or etree database are also given in these configuration files. The parallel versions of these programs are invoked in similar fashion, though their configuration files require additional information about the number of processors and the domain partitioning.
+
+\subsection{Plotting Slices and Surfaces}
+
+UCVM comes with various plotting utilities: \texttt{horizontal\_slice.py}, \texttt{cross\_section.py}, \texttt{vs30.py}, \texttt{z10.py} and \texttt{z25.py}. They can all be run either interactively, by simply invoking the corresponding Python script; or directly, by passing parameters in the command line along with the program. If the latter is chosen, each value is passed on preceded by a flag that indicates the parameter correspondance. Examples with complete flag lists and parameter details are provided in the General User Guide (Table \ref{tab:manuals}). In the interactive case, on the other hand, the program is invoked without any parameters and the user is, instead, prompt for information. To illustrate the interactive process, we show next a terminal session for \texttt{horizontal\_slice.py}:
+
+\begin{lstlisting}[
+        frame=none,
+        basewidth={0.45em,0.4em},
+        basicstyle=\ttfamily\footnotesize,breaklines=true,
+        linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+        numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr},style=input]
+> @./horizontal_slice.py@
+> Plot Horizontal Slice - UCVM 14.3.0
+>
+> This utility helps you plot a horizontal slice across the earth for one of the CVMs
+> that you installed with UCVM.
+>
+> In order to create the plot, you must first specify the region.
+>
+> Please enter the bottom-left longitude from which the plot should start: @-121.5@
+> Next, enter the bottom-left latitude from which the plot should start: @31@
+> Enter the top-right longitude where the plot should end: @-114@
+> Enter the top-right latitude where the plot should end: @38.5@
+> Which grid spacing (in decimal degree units) would you like (usually, this is 0.01): @0.01@
+>
+> Please enter the depth, in meters, at which you would like this plot: @1000@
+>
+> What would you like to plot (either vp, vs, rho, or poisson): @vs@
+>
+> From which CVM would you like this data to come:
+>	1) CVM-S4
+>	2) CVM-H 11.9.1
+>	3) CVM-H 11.9.1 No GTL
+>	4) CVM-S4.26
+>	5) 1D
+>	6) Broadband Whittier Narrows 1D Model
+>	7) 1D w/ Vs30 GTL
+>
+> Select the CVM: @4@
+>
+> Finally, would you like a descritized or smooth color scale
+> (enter 'd' for discrete, 's' for smooth): @d@
+>
+> Retrieving data. Please wait...
+> Data retrieved successfully.
+>
+> Would you like to:
+>	1) Save the data
+>	2) Generate a plot
+>
+> Select one: @2@
+\end{lstlisting}
+
+The above session plots a horizontal slice for the values of \vs{} in the model CVM-S4.26 at a depth of 1~km between longitudes --121.5\textdegree{} and --114\textdegree{}, and latitudes 31\textdegree{} and 38.5\textdegree{}, with a grid spacing of 0.01\textdegree{}. We have highlighted in blue those entries typed by the user. The result is a PNG file with the image shown in Figure~\ref{fig:hslice}. All of the other plotting scripts bundled with UCVM work in a very similar manner.
+
+\input{figure-hslice}
+
+% OLD STUFF
+
+%\subsection{The \textup{\texttt{ucvm2mesh}} command}
+%
+%This command generates a mesh or grid in either IJK-12, IJK-20, IJK-32, or SORD formats. The formats IJK-12, IJK-20, IJK-32, for instance, are used in discrete finite difference models for wave propagation simulations by the code \textcolor{red}{AWP-ODC (?) \citep{Cui_2010_Proc}}. SORD, on the other hand, is a format designed to interface with a finite element code used to simulate dynamic rupture processes (also called SORD) \citep{Ely_2009_GJI}. The \texttt{ucvm2mesh} takes as input a configuration file that is passed on as an argument using the flag ``\texttt{-f}''. This file specifies the model to be used, the region size, and the resolution of the mesh or grid. The following example shows how to execute this command.
+%
+%\subsection{The \textup{\texttt{ucvm2etree}} command}
+%
+%The command \texttt{ucvm2etree} builds a materialized model in the form of an etree database, which uses an octree unstructured mesh-like format that adjust octant sizes to a specific resolution based on the material properties in the CVM being used at every point in a given volume. Resulting etrees built using this command are stand-alone discrete representations of a given velocity mode, and can be used as input models for other operations using UCVM. They can also be queried separately using APIs distributed with the etree library. In wave propagation problems, etrees are used by the code Hercules \citep{Tu_2006_SC, Taborda_2010_Tech} in earthquake ground motion simulations. As in the previous case, this command takes an argument input configuration file. The following example shows how to execute this command.
+%
+%
+%Note that \texttt{ucvm2etree} is the serial version of other parallel (MPI) commands used to build large materialized models in high performance computer systems. Parallel tools for building etrees are useful because regional size simulations require models that can be on the order of hundreds of gigabytes to terabytes and can take significant time and resources to build. Thus, for large etrees, we strongly recommend using the \texttt{ucvm2etree-extract-MPI}, \texttt{ucvm2etree-sort-MPI}, and \texttt{ucvm2etree-merge-MPI} commands explained below.
+%
+%\textcolor{blue}{DG: UCVM is bundled with various plotting utilities. One of the most common utilities is \texttt{horizontal\_slice.py} which plots a horizontal slice of material properties at a user-specified depth. An example figure is provided below}
+%
+%\textcolor{blue}{The map above was generated using the following inputs. User-entered text is denoted in red.}
+%
+%\textcolor{blue}{All of the plotting scripts bundled with UCVM work in a very similar manner. Launching the script will ask a series of questions asking the user to define the region for the plot, the material property ($V_p$, $V_s$, or $\rho$) to plot, the model from which the data should come, and whether or not to save the data to an ASCII text file or display a graphical PNG image.} 
+%
