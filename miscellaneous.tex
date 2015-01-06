@@ -5,7 +5,7 @@ The UCVM framework encompasses a set of minor features intended to support typic
 
 \subsubsection{Querying \vs{} Iso-Surfaces}
 
-The basin structure of a velocity model may be extracted using the \texttt{basin\_query} command. This program accepts a shear wave velocity threshold ($V_{_{\mathrm{thresh}}}$), a step interval along the vertical axis ($d_z$), one or more velocity models, and a list of (latitude, longitude) geographic coordinates. The program begins by tiling the velocity models to form the meta-model. Then, for each input coordinate, the meta-model is queried at a sequence of depths, starting at the surface and proceeding downward with step size $d_z$ meters until either the configured $V_{_{\mathrm{thresh}}}$ is exceeded or a maximum search depth is reached. The shallowest depth at which this transition occurs, or the maximum depth if no transition was found, is reported to the user. An MPI version of this command, \texttt{basin\_query\_mpi}, is provided to quickly generate maps for large sets of coordinates.
+The basin structure of a velocity model may be extracted using the \texttt{basin\_query} command. This program accepts a shear wave velocity threshold ($V_{_{\mathrm{thresh}}}$), a step interval along the vertical axis ($d_z$), one or more velocity models, and a list of (latitude,\,longitude) geographic coordinates. The program begins by tiling the velocity models to form the meta-model. Then, for each input coordinate, the meta-model is queried at a sequence of depths, starting at the surface and proceeding downward with step size $d_z$ meters until either the configured $V_{_{\mathrm{thresh}}}$ is exceeded or a maximum search depth is reached. The shallowest depth at which this transition occurs, or the maximum depth if no transition was found, is reported to the user. An MPI version of this command, \texttt{basin\_query\_mpi}, is provided to quickly generate maps for large sets of coordinates.
 
 \subsubsection{Visualization}
 
@@ -43,8 +43,17 @@ and
 %
 where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that in the case of the velocities, the perturbation factors in equation (\ref{eq:ssh}) are actually applied to the slownesses and not to the velocities.
 
+\subsubsection{Easy Install Utility}
+\label{sec:easy.install}
+
+Finally, we describe \texttt{ucvm\_setup.py}. This is a Python installation script included in the platform distribution. It installs and configures UCVM automatically, including select models. The script works by querying the SCEC server to download a list of tested machine configurations. Example configurations include high-performance parallel systems such as Blue Waters at the National Center for Supercomputing Applications (NCSA), as well as various distributions of Linux and Mac OS X. First, the script compares the user's computer to these known configurations. If a match is found, the script then checks that the proper compilers are available and all the software dependencies are met. For example, on NCSA's Blue Waters, it ensures that the GNU compilers are properly loaded in the user environment. If the current system is not identified, \texttt{ucvm\_setup.py} checks if all UCVM basic dependencies are available. Messages are displayed to the user as the installation progresses.
+
+Once all dependencies have been satisfied, the script prompts for the preferred installation directory (\texttt{UCV\_MDIR}) and the models to be downloaded and installed. All libraries and models have been standardized so that they can be downloaded in the same manner. After a file is downloaded and extracted, a standard Linux \texttt{configure}, \texttt{make}, and \texttt{make} \texttt{install} sequence is run. The \texttt{ucvm\_setup.py} utility ensures that the directory structure for UCVM is self contained. All library files are installed in \texttt{\$UCVM\_DIR/lib} and all models in \texttt{\$UCVM\_DIR/model}.
+
+Finally, the installation script compiles the UCVM source code with all the libraries and models selected by the user. The entire process is fully automated from start to finish. If problems are encountered along the way, an error message is displayed. The message provides a summary of the error instance and includes the contact information (e-mail address) of the SCEC software support team for further assistance.
+
 % *****
-% I changed this section considerably, so I am keeping a copy of the original text written by David and Patric
+% OLD STUFF
 % *****
 
 %The last decade has seem a tremendous growth in high performance computing applications dedicated to earthquake ground motion simulations, with the goal of performing deterministic simulations at high frequencies of engineering interest (\fmax{} 0--10 Hz). With increasing simulation frequencies, seismic velocity models must not only be accurate representations of a region's crustal structure at the geologic scale and represent the geotechnical characteristics of basins and deposits, but should also provide for the adequate representation of the scattering characteristics of the typical heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, such that a structured mesh of material properties is first produced using \texttt{ucvm2mesh} and this mesh is subsequently modified to incorporate the small-scale heterogeneities.
@@ -71,13 +80,4 @@ where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively 
 %Note that introduction of the heterogeneities is accomplished by applying the scaled perturbation to the slowness of the underlying mesh velocities, and then converted back to the seismic velocity. 
 
 % *****
-
-\subsubsection{Easy Install Utility}
-\label{sec:easy.install}
-
-Finally, we describe \texttt{ucvm\_setup.py}. This is a Python installation script included in the platform distribution. It installs and configures UCVM automatically, including select models. The script works by querying the SCEC server to download a list of tested machine configurations. Example configurations include high-performance parallel systems such as Blue Waters at the National Center for Supercomputing Applications (NCSA), as well as various distributions of Linux and Mac OS X. First, the script compares the user's computer to these known configurations. If a match is found, the script then checks that the proper compilers are available and all the software dependencies are met. For example, on NCSA's Blue Waters, it ensures that the GNU compilers are properly loaded in the user environment. If the current system is not identified, \texttt{ucvm\_setup.py} checks if all UCVM basic dependencies are available. Messages are displayed to the user as the installation progresses.
-
-Once all dependencies have been satisfied, the script prompts for the preferred installation directory (\texttt{UCV\_MDIR}) and the models to be downloaded and installed. All libraries and models have been standardized so that they can be downloaded in the same manner. After a file is downloaded and extracted, a standard Linux \texttt{configure}, \texttt{make}, and \texttt{make} \texttt{install} sequence is run. The \texttt{ucvm\_setup.py} utility ensures that the directory structure for UCVM is self contained. All library files are installed in \texttt{\$UCVM\_DIR/lib} and all models in \texttt{\$UCVM\_DIR/model}.
-
-Finally, the installation script compiles the UCVM source code with all the libraries and models selected by the user. The entire process is fully automated from start to finish. If problems are encountered along the way, an error message is displayed. The message provides a summary of the error instance and includes the contact information (e-mail address) of the SCEC software support team for further assistance.
 
