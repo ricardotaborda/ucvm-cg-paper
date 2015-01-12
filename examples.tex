@@ -17,7 +17,30 @@ Querying velocity models is the most basic functionality provided by UCVM. From 
 \end{lstlisting}
 
 \noindent
-Here, \texttt{ucvm.conf} is a configuration file which is created at installation time and contains information about the models available in the framework as installed; the flag ``\texttt{-f}'' indicates the location of this configuration file; and the flag ``\texttt{-m}'' preceeds the label of the model from which properties are to be retrieved. The input, which may be optionally given in a file, are the longitude, latitude, and depth of the queried point. Similarly, one can also query a model for the depth of a threshold velocity using the \texttt{basin\_query} command.
+Here, \texttt{ucvm.conf} is a configuration file which is created at installation time and contains information about the models available in the framework as installed; the flag ``\texttt{-f}'' indicates the location of this configuration file; and the flag ``\texttt{-m}'' preceeds the label of the model from which properties are to be retrieved. The input, which may be optionally given in a file, are the longitude, latitude, and depth of the queried point. An example input file for a single query point at 117W longitude, 34N latitude, and 50.0 meters depth is given below.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+-117.0000    34.0000     50.000
+\end{lstlisting}
+Providing this input file to the command line described above, \texttt{ucvm\_query} will return the following set of parameters.
+
+\begin{lstlisting}[
+	frame=none,
+	basewidth={0.45em,0.4em},
+	basicstyle=\ttfamily\footnotesize,breaklines=true,
+	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
+	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
+-117.0000    34.0000     50.000   1043.367    748.000       cvms   4886.639   2659.200   2636.600       none      0.000      0.000      0.000      crust   4886.639   2659.200   2636.600
+\end{lstlisting}
+
+The first five columns are the coordinates of the point (longitude, latitude, and depth), the elevation of that geographic point in meters, and $V_{s30}$ value in meters/sec. The material properties for the point are subsequently given as three datasets of four columns each. The first dataset reports the crustal model used to satisfy the request along with the reported \vp{}, \vs{} and $\rho$ from that model. The second dataset reports the same parameters provided by a GTL (if any). The remaining dataset represents the combined material properties from the crustal and GTL models, produced via interpolation of their corresponding velocities and densities. The interpolation method is specified in the first column of this last dataset (14th column position overall). Note that in this particular example, no GTL information was reported as a GTL was not specified in the model list on the command line. Thus, the combined material properties are based purely on the information provided from the (crustal) CVM-S model.
+
+Similarly, one can also query a model for the depth of a threshold velocity using the \texttt{basin\_query} command.
 
 \begin{lstlisting}[
 	frame=none,
@@ -29,7 +52,7 @@ Here, \texttt{ucvm.conf} is a configuration file which is created at installatio
 \end{lstlisting}
 
 \noindent
-In this case, the configuration file parameter requires no flag, and the flag ``\texttt{-v}'' indicates the threshold velocity in m/s.
+In this case, the configuration file parameter requires no flag, and the flag ``\texttt{-v}'' indicates the threshold \vs{} velocity in m/s.
 
 \subsection{Creating Structured and Semi-Unstructured Meshes}
 
