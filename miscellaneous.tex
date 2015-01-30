@@ -21,27 +21,27 @@ Plots of horizontal and vertical slices may be generated with the \texttt{horizo
 In addition, basin maps for \vseq{1000} and \vseq{2500} may be plotted using the \texttt{z10.py} and \texttt{z25.py} scripts, respectively. These operate analogously to the \texttt{basin\_query} command described previously. Similarly, generation of \vsthirty{} maps is supported with the \texttt{vs30.py} script. In all cases, the output images are saved to disk in Portable Network Graphics (PNG) format, and as ASCII-based data files.
 
 \subsubsection{Small-Scale Heterogeneities}
+\label{sec:ssh}
 
-In recent years, simulations using CVMs have improved physics, higher frequencies, higher resolution, and larger geographical regions. This is in part due to an increasing interest in broadband simulations with higher deterministic maximum frequencies (5--10 Hz) suitable for engineering applications. As a result, needs have arisen requiring models not only to accurately represent a region's structure at the geologic and geotechnical scales, but also to represent the scattering characteristics typical of heterogeneities observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, by means of which material properties are modified to reflect the changes caused by such heterogeneities.
+In recent years, deterministic earthquake simulations have improved the underlying physics, and added higher frequencies, higher resolution, and larger geographical regions. To reach frequencies of 10 Hz+, desired for engineering applications, needs have arisen requiring models not only to accurately represent a region's large-scale geologic structure (100s-1,000s of meters), but also to represent the small-scale heterogeneities (10-100 m) observed in geomaterials. To this end, UCVM provides a mechanism for incorporating small-scale heterogeneities into any underlying velocity model. This mechanism is implemented as a post-processing step to meshing, by means of which material properties are modified to reflect the changes caused by such heterogeneities. As resolution of the small-scale heterogeneities by direct measurement is impossible, we use statistical descriptions via 3D Von Karman auto covariance functions. Constraints on the parameters of the Von Karman distributions (correlation length, Hurst number, standard deviation from background model) are obtained from sonic logs \citep[see][]{Olsen_2014_USGS}.
 
-The introduction of these small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate}. This process creates a mesh whose grid point payloads are perturbations (with a normalized amplitude). These perturbations are generated following the algorithms previously used by \citet{Withers_2013_SCEC} and \citet{Savran_2014_SSA}. Then, the perturbations are applied to the material properties \vp{}, \vs{}, and $\rho$ of the original mesh using the command \texttt{ssh\_merge}, which iterates through the cells of the two meshes and adds the heterogeneities multiplied by a user-defined scaling factor to the the original material properties. This adjustment is done according to the  relations:
-%
+The introduction of these small-scale heterogeneities begins by constructing an identically sized mesh using the command \texttt{ssh\_generate}. This process creates a mesh whose grid point payloads are perturbations with zero mean and a standard deviation of 1. These perturbations are generated following the algorithms previously used by \citet{Withers_2013_SCEC} and \citet{Savran_2014_SSA}. Then, the perturbations are applied to the material properties \vp{}, \vs{}, and $\rho$ of the original mesh using the command \texttt{ssh\_merge}, which iterates through the cells of the two meshes and adds the heterogeneities multiplied by a user-defined scaling factor (standard deviation of perturbations relative to the background field) to the original material properties. This adjustment is done according to the relations:
 \begin{equation}
-\label{eq:ssh}
-	V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+\label{eq:ssh.vel}
+V_{\mathrm{P}}^{\mathrm{new}} = \frac{ V_{\mathrm{P}}^{\mathrm{old}} }{ (1 - k \epsilon) }
 	\hspace{0.3em},
 	\hspace{0.6em}
-	V_{\mathrm{S}}^{\mathrm{new}} = \frac{ V_{\mathrm{S}}^{\mathrm{old}} }{ (1 + k \epsilon) }
+V_{\mathrm{S}}^{\mathrm{new}} = \frac{ V_{\mathrm{S}}^{\mathrm{old}} }{ (1 - k \epsilon) }
 \end{equation}
-%
 and
-%
 \begin{equation}
-	\rho^{\mathrm{new}} = (1 + k \epsilon) \, \rho^{\mathrm{old}}
+\label{eq:ssh.density}
+\rho^{\mathrm{new}} = (1 + k \epsilon) \, \rho^{\mathrm{old}}
 	\hspace{0.3em},
+	\hspace{0.6em}
 \end{equation}
-%
-where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that in the case of the velocities, the perturbation factors in equation (\ref{eq:ssh}) are actually applied to the slownesses (i.e. the reciprocals of the velocities).
+
+where $k$ and $\epsilon$ are the scaling and perturbation factors, respectively \citep[see][]{Withers_2013_SCEC, Savran_2014_SSA}. Note that in the case of the velocities, the perturbation factors in equation \eqref{eq:ssh.vel} are actually applied to the slownesses (i.e. the reciprocals of the velocities), in order to preserve unbiased travel times.
 
 \subsubsection{Easy Install Utility}
 \label{sec:easy.install}
