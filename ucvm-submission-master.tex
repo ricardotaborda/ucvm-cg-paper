@@ -1,0 +1,84 @@
+
+\documentclass[titlepage,12pt]{article}
+
+\usepackage{simplemargins}
+\usepackage[round,authoryear,semicolon]{natbib}
+\usepackage[raggedright,small,bf]{titlesec}
+\usepackage{textcomp}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{ifthen}
+
+\usepackage{authblk}
+\renewcommand\Authfont{\small}
+\renewcommand\Affilfont{\footnotesize}
+
+\usepackage{ifpdf}
+\ifpdf
+	\usepackage[pdftex,bookmarks=false]{hyperref}
+	\usepackage{graphicx}
+\else
+	\usepackage{graphics}
+	\usepackage{graphicx}
+	\usepackage{epsfig}
+	\usepackage[dvipdfm,bookmarks=false]{hyperref}
+\fi
+
+\usepackage{listings}
+\definecolor{mylistingbkgd}{RGB}{255,255,220}
+\definecolor{mylistingnclr}{RGB}{150,150,150}
+\lstdefinestyle{input}{
+	moredelim=**[is][\color{blue}]{@}{@}
+}
+\lstdefinestyle{optional}{
+	moredelim=**[is][\color{blue}\it]{@}{@}
+}
+
+
+\clubpenalty=10000  % Orphan - First of paragraph left behind
+\widowpenalty=10000 % Widow  - Last of paragraph sent ahead
+
+
+\captionsetup{font=small,labelfont=bf}
+\captionsetup[subfloat]{font=footnotesize,textfont=scriptsize}
+
+
+\hypersetup{
+    pdfpagelayout=OneColumn,
+	colorlinks = true,
+	urlcolor   = blue,
+	citecolor  = blue,
+	linkcolor  = blue
+}
+
+\urlstyle{same}
+
+\settopmargin{0.84in}
+\setleftmargin{0.8in}
+\setrightmargin{0.8in}
+\setbottommargin{0.9in}
+
+\usepackage[left]{lineno}
+\doublespacing
+
+\input{mycommands}
+
+\begin{document}
+
+% \begin{frontmatter}
+
+\input{title-and-authors-submission}
+
+\maketitle
+
+\linenumbers
+
+\input{abstract}
+
+\input{content}
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}

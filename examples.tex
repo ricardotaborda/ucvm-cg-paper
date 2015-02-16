@@ -35,7 +35,10 @@ Providing this input file to the command line described above, \texttt{ucvm\_que
 	basicstyle=\ttfamily\footnotesize,breaklines=true,
 	linewidth=0.98\columnwidth,xleftmargin=0.065\columnwidth,
 	numbers=left,numberblanklines=true,numberstyle=\scriptsize\color{mylistingnclr}]
--117.000      34.000     50.000   1043.367    748.000    cvms   4886.639   2659.200   2636.600                 none      0.000      0.000      0.000                crust  4886.639   2659.200   2636.600
+-117.000      34.000     50.000   1043.367    748.000    
+     cvms   4886.639   2659.200   2636.600                 
+     none      0.000      0.000      0.000    
+     crust  4886.639   2659.200   2636.600
 \end{lstlisting}
 
 The first five fields are the coordinates of the point (longitude, latitude, and depth), the elevation of that geographic point in meters, and $V_{s30}$ value in meters/sec. The material properties for the point are subsequently given as three datasets of four fields each. The first dataset reports the crustal model used to satisfy the request along with the reported \vp{}, \vs{} and $\rho$ from that model. The second dataset reports the same parameters provided by a GTL (if any). The remaining dataset represents the combined material properties from the crustal and GTL models, produced via interpolation of their corresponding velocities and densities. The interpolation method is specified in the first field of this last dataset (14th field position overall). Note that in this particular example, the output fields corresponding to the GTL information are the word ``none'' followed by zeros. This is because no GTL model was specified in the list of models to be queried as input in the command line. Thus, the combined material properties are based purely on the information provided from the (crustal) CVM-S model.

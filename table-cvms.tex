@@ -1,7 +1,17 @@
 
+\makeatletter
+\if@twocolumn
+      \def\cvmtablefont{\small}
+      \def\cvmtablefoot{\footnotesize}
+\else
+      \def\cvmtablefont{\scriptsize}
+      \def\cvmtablefoot{\tiny}
+\fi
+\makeatother
+
 \begin{table*}%[ht!]
 \centering
-\small
+\cvmtablefont
 \caption{List of velocity models (top section) and datasets (bottom section) currently supported by UCVM and their corresponding coverage region. Within UCVM, each model is identified by a string label. Some models can be automatically included when installing UCVM, while others require to be installed manually. In the coverage coordinates, the word global indicates models that are non-bounded and will return a payload regardless of the queried coordinates. However, the use of these models is intended for a particular region. Additional details are available in the references on the rightmost column.}
 \begin{tabular}[]{llllll}
 %\\
@@ -61,9 +71,9 @@ DEM                & Southern California   & --            &  Automated   & -129
                    &                       &               &              & -109.9633, 32.0737 &                              \\
                    &                       &               &              & -117.8794, 27.8247 &                              \\
 \hline
-\multicolumn{6}{l}{$\dagger$\quad\footnotesize The model CVM-S5 is an updated version of CVM-S4.26 that is currently under development and scheduled to be released in 2015.}\\
-\multicolumn{6}{l}{$\ddagger$\quad\footnotesize Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
-\multicolumn{6}{l}{$\S$\quad\footnotesize Same as the Hadley-Kanamori 1D to allow UCVM treating this 1D structure as both a CVM and a GTL.}\\
+\multicolumn{6}{l}{$\dagger$\quad\cvmtablefoot The model CVM-S5 is an updated version of CVM-S4.26 that is currently under development and scheduled to be released in 2015.}\\
+\multicolumn{6}{l}{$\ddagger$\quad\cvmtablefoot Although these models are unbounded, they were defined with a particular region in mind. See references for details.}\\
+\multicolumn{6}{l}{$\S$\quad\cvmtablefoot Same as the Hadley-Kanamori 1D to allow UCVM treating this 1D structure as both a CVM and a GTL.}\\
 \\
 \end{tabular}
 \label{tab:cvms}

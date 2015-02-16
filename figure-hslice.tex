@@ -1,8 +1,16 @@
 
+\makeatletter
+\if@twocolumn
+	\def\hslizesize{0.9\columnwidth}
+\else
+	\def\hslizesize{0.5\textwidth}
+\fi
+\makeatother
+
 \begin{figure}%[ht!]
 	\centering
 	\includegraphics
-		[width=0.9\columnwidth]
+		[width=\hslizesize]
 		{figures/pdf/hslice}
 	\caption{Example of a horizontal slice of the model CVM-S4.26 for values of \vs{} generated using the plotting utility \texttt{horizontal\_slice.py}.}
 	\label{fig:hslice}
