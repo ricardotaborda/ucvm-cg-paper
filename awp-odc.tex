@@ -1,0 +1,11 @@
+
+\input{figure-meshing}
+
+\subsection{AWP-ODC}
+
+One of the most important features of UCVM is that the framework can be used to generate uniform grids (here also referred as structured meshes) in a format consistent with that used by the AWP-ODC simulation code \citep{Cui_2010_Proc}. This feature is supported through the program \texttt{ucvm2mesh}.
+
+Construction of a mesh proceeds as shown in Figure \ref{fig:meshing}. The user specifies a two-dimensional map projection (such as UTM-11), a latitude and longitude geographic anchor point, mesh cell dimensions ($n_x$, $n_y$, $n_z$) along the $x$, $y$ and $z$ axes (where the $x,y$ coordinates define the plane of the projection and $z$ is the vertical component), step size $d_x$ in meters within the projected space, and rotation angle within the map projection. Additionally, the user provides a list of CVMs to query. These models are then tiled by the program as described above. To facilitate the construction of very large meshes, the framework also offers a parallel version of the mesher named \texttt{ucvm2mesh-mpi}. This MPI program operates analogously to that of the serial version (see Figure \ref{fig:meshing}). 
+
+
+
